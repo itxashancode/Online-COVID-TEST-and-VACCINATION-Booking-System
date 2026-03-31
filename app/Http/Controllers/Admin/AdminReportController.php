@@ -12,14 +12,24 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class AdminReportController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $appointments = Appointment::with(['patient', 'hospital', 'testResult'])
-            ->where('appointment_type', 'covid_test')
-            ->latest()
-            ->get();
+        $query = Appointment::with(['patient', 'hospital', 'testResult'])
+            ->where('appointment_type', 'covid_test');
 
-        return view('admin.reports.index', compact('appointments'));
+        // Date filtering
+        if ($request->has('filter_date') && $request->filter_date) {
+            $query->whereDate('appointment_date', $request->filter_date);
+        }
+
+        $appointments = $query->latest()->paginate(10);
+
+        // Calculate summary stats for the reports page
+        $totalTests = Appointment::where('appointment_type', 'covid_test')->count();
+        $positiveCount = \App\Models\TestResult::where('result', 'positive')->count();
+        $vaccinationCount = Appointment::where('appointment_type', 'vaccination')->where('status', 'completed')->count();
+
+        return view('admin.reports.index', compact('appointments', 'totalTests', 'positiveCount', 'vaccinationCount'));
     }
 
     public function export(Request $request)

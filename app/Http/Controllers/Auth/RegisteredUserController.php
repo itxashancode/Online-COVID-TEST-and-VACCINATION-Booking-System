@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use App\Models\Hospital;
 use App\Providers\RouteServiceProvider;
-use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\events\Registered;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
 
@@ -32,25 +31,9 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(RegisterRequest $request): RedirectResponse
     {
-        // Base validation rules for all users
-        $rules = [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'in:patient,hospital'],
-        ];
-
-        // Additional validation for hospital registrations
-        if ($request->role === 'hospital') {
-            $rules['hospital_name'] = ['required', 'string', 'max:255'];
-            $rules['phone'] = ['required', 'string', 'max:20'];
-            $rules['city'] = ['required', 'string', 'max:100'];
-            $rules['address'] = ['required', 'string'];
-        }
-
-        $validated = $request->validate($rules);
+        $validated = $request->validated();
 
         /**
          * Determine user_type and status based on role:

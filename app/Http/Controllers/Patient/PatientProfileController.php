@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\UpdateProfileRequest;
 
 class PatientProfileController extends Controller
 {
@@ -17,17 +17,9 @@ class PatientProfileController extends Controller
         return view('patient.profile.index', compact('user'));
     }
 
-    public function update(Request $request): RedirectResponse
+    public function update(UpdateProfileRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . auth()->id(),
-            'phone' => 'nullable|string',
-            'address' => 'nullable|string',
-            'city' => 'nullable|string',
-            'current_password' => 'nullable|required_with:new_password',
-            'new_password' => 'nullable|min:8|confirmed',
-        ]);
+        $validated = $request->validated();
 
         $user = auth()->user();
         $user->name = $validated['name'];

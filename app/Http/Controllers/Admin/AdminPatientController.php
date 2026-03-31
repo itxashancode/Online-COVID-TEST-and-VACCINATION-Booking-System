@@ -9,9 +9,20 @@ use App\Models\User;
 
 class AdminPatientController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $patients = User::role('patient')->latest()->get();
+        $query = User::role('patient');
+
+        // Search by patient name or email
+        if ($request->has('search') && $search = $request->search) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $patients = $query->latest()->paginate(10);
+
         return view('admin.patients.index', compact('patients'));
     }
 

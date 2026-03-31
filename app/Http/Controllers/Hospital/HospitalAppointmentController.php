@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Appointment;
+use App\Jobs\SendAppointmentStatusChanged;
 
 class HospitalAppointmentController extends Controller
 {
@@ -54,6 +55,9 @@ class HospitalAppointmentController extends Controller
             ->firstOrFail();
         $appointment->update(['status' => 'approved']);
 
+        // Send email notification to patient
+        SendAppointmentStatusChanged::dispatch($appointment, 'approved');
+
         return redirect()->back()->with('success', 'Appointment approved successfully!');
     }
 
@@ -64,6 +68,9 @@ class HospitalAppointmentController extends Controller
             ->where('hospital_id', $hospital->id)
             ->firstOrFail();
         $appointment->update(['status' => 'rejected']);
+
+        // Send email notification to patient
+        SendAppointmentStatusChanged::dispatch($appointment, 'rejected');
 
         return redirect()->back()->with('success', 'Appointment rejected successfully!');
     }

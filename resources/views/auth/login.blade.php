@@ -92,10 +92,10 @@
         }
     </style>
 
-    <div class="glass-card mx-auto" style="max-width: 450px;">
+    <div class="glass-card mx-auto" style="max-width: 600px;">
         <!-- HEADER -->
         <div class="header-gradient">
-            <i data-lucide="shield-plus" style="width: 56px; height: 56px; margin-bottom: 16px;"></i>
+            <i data-lucide="shield-plus" style="width: 56px; height: 56px; margin: 0 auto 16px auto; display: block;"></i>
             <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0;">Welcome Back</h2>
             <p style="color: rgba(255, 255, 255, 0.7); margin: 8px 0 0; font-size: 0.9rem;">Access your MED-Digi health profile</p>
         </div>
@@ -118,7 +118,12 @@
                 <!-- Password -->
                 <div class="input-group-custom">
                     <label style="display: block; font-weight: 600; font-size: 0.875rem; color: #475569; margin-bottom: 6px;">Password</label>
-                    <input id="password" class="form-input" type="password" name="password" required autocomplete="current-password" placeholder="••••••••" />
+                    <div style="position: relative;">
+                        <input id="password" class="form-input" type="password" name="password" required autocomplete="current-password" placeholder="••••••••" style="padding-right: 40px;" />
+                        <button type="button" onclick="togglePassword('password', 'eye-login')" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #64748b; padding: 0;">
+                            <i data-lucide="eye" id="eye-login" style="width: 20px; height: 20px;"></i>
+                        </button>
+                    </div>
                     <x-input-error :messages="$errors->get('password')" style="margin-top: 8px; color: #ef4444; font-size: 0.8rem;" />
                 </div>
 
@@ -157,5 +162,18 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         lucide.createIcons();
+
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
     </script>
 </x-guest-layout>

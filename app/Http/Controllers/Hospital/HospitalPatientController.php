@@ -16,7 +16,7 @@ class HospitalPatientController extends Controller
      *
      * @return View
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         /**
          * Get the logged-in hospital's profile.
@@ -28,19 +28,21 @@ class HospitalPatientController extends Controller
         if (!$hospital) {
             $patients = collect();
         } else {
-            /**
-             * Query all patients (users with 'patient' role) who have
-             * at least one approved appointment at this hospital.
-             *
-             * Why whereHas? Filters patients based on their related appointments
-             * This returns only patients, not appointments themselves
-             */
-            $patients = User::role('patient')
+            $query = User::role('patient')
                 ->whereHas('appointments', function($query) use ($hospital) {
                     $query->where('hospital_id', $hospital->id)
-                          ->where('status', 'approved');
-                })
-                ->get();
+                          ->whereIn('status', ['approved', 'completed']);
+                });
+
+            // Search by patient name or email
+            if ($request->has('search') && $search = $request->search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%");
+                });
+            }
+
+            $patients = $query->paginate(10);
         }
 
         // Pass patients to the view

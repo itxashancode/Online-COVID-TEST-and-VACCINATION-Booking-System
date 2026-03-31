@@ -10,9 +10,22 @@ use Illuminate\View\View;
 
 class AdminBookingController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $appointments = Appointment::with(['patient', 'hospital'])->latest()->get();
+        $query = Appointment::with(['patient', 'hospital']);
+
+        // Search by patient name or hospital name
+        if ($request->has('search') && $search = $request->search) {
+            $query->whereHas('patient', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })
+            ->orWhereHas('hospital', function($q) use ($search) {
+                $q->where('hospital_name', 'like', "%{$search}%");
+            });
+        }
+
+        $appointments = $query->latest()->paginate(10);
+
         return view('admin.bookings.index', compact('appointments'));
     }
 

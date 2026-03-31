@@ -73,17 +73,17 @@
         }
     </style>
 
-    <div class="glass-card mx-auto" style="max-width: 500px; margin-bottom: 40px;">
+    <div class="glass-card mx-auto" style="max-width: 700px; margin-bottom: 40px;">
         <!-- HEADER -->
         <div class="header-gradient">
-            <i data-lucide="user-plus" style="width: 56px; height: 56px; margin-bottom: 16px;"></i>
+            <i data-lucide="user-plus" style="width: 56px; height: 56px; margin: 0 auto 16px auto; display: block;"></i>
             <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0;">Create Account</h2>
             <p style="color: rgba(255, 255, 255, 0.8); margin: 8px 0 0; font-size: 0.9rem;">Join the MED-Digi health network</p>
         </div>
 
         <!-- FORM BODY -->
         <div style="padding: 40px;">
-            <form method="POST" action="{{ route('register') }}">
+            <form method="POST" action="{{ route('register') }}" x-data="{ submitting: false }" @submit="submitting = true">
                 @csrf
 
                 <!-- Full Name -->
@@ -143,21 +143,35 @@
                     <!-- Password -->
                     <div class="input-group-custom" style="flex: 1;">
                         <label class="text-label">Password</label>
-                        <input id="password" class="form-input" type="password" name="password" required autocomplete="new-password" placeholder="••••••••" />
+                        <div style="position: relative;">
+                            <input id="password" class="form-input" type="password" name="password" required autocomplete="new-password" placeholder="••••••••" style="padding-right: 40px;" />
+                            <button type="button" onclick="togglePassword('password', 'eye-reg')" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #64748b; padding: 0;">
+                                <i data-lucide="eye" id="eye-reg" style="width: 20px; height: 20px;"></i>
+                            </button>
+                        </div>
                         <x-input-error :messages="$errors->get('password')" class="error-text" />
                     </div>
 
                     <!-- Confirm Password -->
                     <div class="input-group-custom" style="flex: 1;">
                         <label class="text-label">Confirm</label>
-                        <input id="password_confirmation" class="form-input" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="••••••••" />
+                        <div style="position: relative;">
+                            <input id="password_confirmation" class="form-input" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="••••••••" style="padding-right: 40px;" />
+                            <button type="button" onclick="togglePassword('password_confirmation', 'eye-conf')" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #64748b; padding: 0;">
+                                <i data-lucide="eye" id="eye-conf" style="width: 20px; height: 20px;"></i>
+                            </button>
+                        </div>
                         <x-input-error :messages="$errors->get('password_confirmation')" class="error-text" />
                     </div>
                 </div>
 
                 <!-- SUBMIT -->
-                <button type="submit" class="btn-submit" style="margin-top: 10px;">
-                    Register Now
+                <button type="submit" class="btn-submit" style="margin-top: 10px;" :disabled="submitting">
+                    <span x-show="!submitting">Register Now</span>
+                    <span x-show="submitting" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                        <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="width: 16px; height: 16px;"></div>
+                        Processing...
+                    </span>
                 </button>
             </form>
 
@@ -192,5 +206,18 @@
                 hospitalFields.classList.remove('hidden');
             }
         });
+
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
     </script>
 </x-guest-layout>

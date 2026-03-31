@@ -20,6 +20,23 @@
     </div>
 </div>
 
+<!-- Search Form -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ route('admin.hospitals.index') }}">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Search by hospital name..." value="{{ request('search') }}">
+                <button class="btn btn-primary" type="submit">
+                    <i data-lucide="search" style="width: 16px; height: 16px;"></i> Search
+                </button>
+                @if(request('search'))
+                    <a href="{{ route('admin.hospitals.index') }}" class="btn btn-outline-secondary">Clear</a>
+                @endif
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="card border-0 shadow-sm rounded-4">
     <div class="card-body">
         @if($hospitals->count() > 0)
@@ -84,7 +101,10 @@
                 </table>
             </div>
 
-            {{-- Pagination if enabled: {{ $hospitals->links() }} --}}
+            {{-- Pagination --}}
+            <div class="mt-4">
+                {{ $hospitals->appends(request()->query())->links() }}
+            </div>
         @else
             <div class="empty-state">
                 <i data-lucide="building" style="width: 64px; height: 64px;"></i>

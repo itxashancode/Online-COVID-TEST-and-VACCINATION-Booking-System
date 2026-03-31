@@ -7,13 +7,22 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Hospital;
+use App\Jobs\SendHospitalStatusChanged;
 
 class AdminHospitalController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $hospitals = Hospital::with('user')->get();
+        $query = Hospital::with('user');
 
+        // Search by hospital name
+        if ($request->has('search') && $search = $request->search) {
+            $query->where('hospital_name', 'like', "%{$search}%");
+        }
+
+        $hospitals = $query->latest()->paginate(10);
+
+        // Calculate counts from the paginated results
         $approvedCount = $hospitals->where('status', 'approved')->count();
         $pendingCount = $hospitals->where('status', 'pending')->count();
         $rejectedCount = $hospitals->where('status', 'rejected')->count();
@@ -31,6 +40,9 @@ class AdminHospitalController extends Controller
         $hospital = Hospital::findOrFail($id);
         $hospital->update(['status' => 'approved']);
 
+        // Send email notification asynchronously
+        SendHospitalStatusChanged::dispatch($hospital, 'approved');
+
         return redirect()->back()->with('success', 'Hospital approved successfully!');
     }
 
@@ -38,6 +50,9 @@ class AdminHospitalController extends Controller
     {
         $hospital = Hospital::findOrFail($id);
         $hospital->update(['status' => 'rejected']);
+
+        // Send email notification asynchronously
+        SendHospitalStatusChanged::dispatch($hospital, 'rejected');
 
         return redirect()->back()->with('success', 'Hospital rejected successfully!');
     }

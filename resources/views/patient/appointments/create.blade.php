@@ -39,7 +39,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('patient.appointments.store') }}" method="POST">
+                <form action="{{ route('patient.appointments.store') }}" method="POST" x-data="{ submitting: false }" @submit="submitting = true">
                     @csrf
 
                     <!-- Hospital Selection -->
@@ -103,9 +103,14 @@
 
                     <div class="d-flex justify-content-between">
                         <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-2 py-2 px-4">Cancel</a>
-                        <button type="submit" class="btn btn-primary rounded-2 shadow-sm py-2 px-4 fw-semibold">
-                            <i data-lucide="send" class="me-2" style="width: 16px; height: 16px;"></i>
-                            Request Appointment
+                        <button type="submit" class="btn btn-primary rounded-2 shadow-sm py-2 px-4 fw-semibold" :disabled="submitting">
+                            <template x-if="submitting">
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            </template>
+                            <template x-if="!submitting">
+                                <i data-lucide="send" class="me-2" style="width: 16px; height: 16px;"></i>
+                            </template>
+                            <span x-text="submitting ? 'Submitting...' : 'Request Appointment'"></span>
                         </button>
                     </div>
                 </form>

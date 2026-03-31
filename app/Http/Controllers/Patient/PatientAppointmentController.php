@@ -8,6 +8,7 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Hospital;
 use App\Models\Appointment;
+use App\Http\Requests\StoreAppointmentRequest;
 
 class PatientAppointmentController extends Controller
 {
@@ -27,15 +28,9 @@ class PatientAppointmentController extends Controller
         return view('patient.appointments.create', compact('hospital', 'hospitals'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreAppointmentRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'hospital_id' => 'required|exists:hospitals,id',
-            'appointment_type' => 'required|in:covid_test,vaccination',
-            'appointment_date' => 'required|date|after_or_equal:today',
-            'appointment_time' => 'nullable',
-            'notes' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         Appointment::create([
             'patient_id' => auth()->id(),

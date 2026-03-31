@@ -36,7 +36,7 @@
                     </p>
                 </div>
 
-                <form action="{{ route('hospital.results.update', $appointment->id) }}" method="POST">
+                <form action="{{ route('hospital.results.update', $appointment->id) }}" method="POST" x-data="{ submitting: false }" @submit="submitting = true">
                     @csrf
                     @method('PUT')
 
@@ -74,7 +74,15 @@
                             <input type="date" name="result_date" id="result_date" class="form-control" required value="{{ date('Y-m-d') }}">
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Save Test Result</button>
+                        <button type="submit" class="btn btn-primary" :disabled="submitting">
+                            <template x-if="submitting">
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            </template>
+                            <template x-if="!submitting">
+                                <i data-lucide="save" class="me-2" style="width: 16px; height: 16px;"></i>
+                            </template>
+                            <span x-text="submitting ? 'Saving...' : 'Save Test Result'"></span>
+                        </button>
                     @else
                         <!-- Vaccination Update Section -->
                         <div class="mb-3">
@@ -108,7 +116,15 @@
                             <input type="date" name="vaccination_date" id="vaccination_date" class="form-control" required value="{{ date('Y-m-d') }}">
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Complete Vaccination</button>
+                        <button type="submit" class="btn btn-primary" :disabled="submitting">
+                            <template x-if="submitting">
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            </template>
+                            <template x-if="!submitting">
+                                <i data-lucide="check-circle" class="me-2" style="width: 16px; height: 16px;"></i>
+                            </template>
+                            <span x-text="submitting ? 'Processing...' : 'Complete Vaccination'"></span>
+                        </button>
                     @endif
                 </form>
             </div>

@@ -122,6 +122,10 @@ Route::prefix('patient')->middleware(['auth', 'patient'])->name('patient.')->gro
     // View Test Results & Vaccination Records
     Route::get('/results', [PatientResultController::class, 'index'])->name('results.index');
 
+    // Download Certificates
+    Route::get('/results/test/{id}/certificate', [PatientResultController::class, 'downloadTestCertificate'])->name('results.test.certificate');
+    Route::get('/results/vaccination/{id}/certificate', [PatientResultController::class, 'downloadVaccinationCertificate'])->name('results.vaccination.certificate');
+
     // My Profile (View, Update, Delete)
     Route::get('/profile', [PatientProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile', [PatientProfileController::class, 'update'])->name('profile.update');

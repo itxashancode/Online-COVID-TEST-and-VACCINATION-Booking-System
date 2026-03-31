@@ -68,42 +68,99 @@
             <div class="card-body">
                 <p class="text-muted">View COVID-19 test results with date-wise filtering.</p>
 
-                <div class="mb-3">
-                    <label for="report_date" class="form-label">Filter by Date</label>
-                    <input type="date" class="form-control">
-                </div>
+                <form method="GET" action="{{ route('admin.reports.index') }}">
+                    <div class="mb-3">
+                        <label for="filter_date" class="form-label">Filter by Date</label>
+                        <input type="date" name="filter_date" id="filter_date" class="form-control" value="{{ request('filter_date') }}">
+                    </div>
 
-                <button class="btn btn-primary">View Results</button>
+                    <button type="submit" class="btn btn-primary">View Results</button>
+                    @if(request('filter_date'))
+                        <a href="{{ route('admin.reports.index') }}" class="btn btn-outline-secondary">Clear Filter</a>
+                    @endif
+                </form>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Summary Stats -->
-<div class="row">
+<div class="row mb-5">
     <div class="col-md-4">
-        <div class="card bg-info text-white">
-            <div class="card-body text-center">
-                <h3>{{-- $totalTests --}}0</h3>
-                <p class="mb-0">Total COVID Tests</p>
+        <div class="card bg-info text-white shadow-sm border-0 rounded-4">
+            <div class="card-body text-center p-4">
+                <h3 class="display-4 fw-bold mb-0">{{ $totalTests ?? 0 }}</h3>
+                <p class="mb-0 text-white-50">Total COVID Tests</p>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card bg-success text-white">
-            <div class="card-body text-center">
-                <h3>{{-- $positiveCount --}}0</h3>
-                <p class="mb-0">Positive Cases</p>
+        <div class="card bg-danger text-white shadow-sm border-0 rounded-4">
+            <div class="card-body text-center p-4">
+                <h3 class="display-4 fw-bold mb-0">{{ $positiveCount ?? 0 }}</h3>
+                <p class="mb-0 text-white-50">Positive Cases</p>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card bg-warning text-dark">
-            <div class="card-body text-center">
-                <h3>{{-- $vaccinationCount --}}0</h3>
-                <p class="mb-0">Vaccinations Given</p>
+        <div class="card bg-teal text-white shadow-sm border-0 rounded-4" style="background-color: #20c997;">
+            <div class="card-body text-center p-4">
+                <h3 class="display-4 fw-bold mb-0">{{ $vaccinationCount ?? 0 }}</h3>
+                <p class="mb-0 text-white-50">Vaccinations Given</p>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Test Results Table -->
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold text-dark">Data Listing: COVID-19 Test Reports</h5>
+        <span class="text-muted small">Total: {{ $appointments->total() }} records</span>
+    </div>
+    <div class="card-body">
+        @if($appointments->count() > 0)
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Patient Name</th>
+                            <th>Hospital</th>
+                            <th>Test Date</th>
+                            <th>Result Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($appointments as $appointment)
+                            <tr>
+                                <td class="fw-bold">{{ $appointment->patient->name }}</td>
+                                <td>{{ $appointment->hospital->hospital_name }}</td>
+                                <td>{{ \Carbon\Carbon::parse($appointment->appointment_date)->format('M d, Y') }}</td>
+                                <td>
+                                    @if($appointment->testResult)
+                                        <span class="badge @if($appointment->testResult->result == 'positive') bg-danger @elseif($appointment->testResult->result == 'negative') bg-success @else bg-warning @endif rounded-pill px-3">
+                                            {{ ucfirst($appointment->testResult->result) }}
+                                        </span>
+                                    @else
+                                        <span class="badge bg-secondary rounded-pill px-3">Result Not Found</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+                {{-- Pagination --}}
+                <div class="mt-4">
+                    {{ $appointments->appends(request()->query())->links() }}
+                </div>
+            @else
+            <div class="text-center py-5">
+                <i data-lucide="file-x" style="width: 48px; height: 48px;" class="text-muted mb-3"></i>
+                <p class="text-muted">No test results found for the requested criteria.</p>
+            </div>
+        @endif
     </div>
 </div>
 @endsection

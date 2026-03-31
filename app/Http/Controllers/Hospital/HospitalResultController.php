@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Hospital;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Appointment;
 use App\Models\TestResult;
 use App\Models\VaccinationRecord;
 use App\Models\Vaccine;
+use App\Jobs\SendTestResultUpdated;
+use App\Http\Requests\UpdateTestResultRequest;
+use App\Http\Requests\UpdateVaccinationRequest;
 
 class HospitalResultController extends Controller
 {
@@ -49,13 +51,9 @@ class HospitalResultController extends Controller
         return view('hospital.results.edit', compact('appointment', 'testResult'));
     }
 
-    public function update(Request $request, $id): RedirectResponse
+    public function update(UpdateTestResultRequest $request, $id): RedirectResponse
     {
-        $validated = $request->validate([
-            'result' => 'required|in:positive,negative,pending',
-            'doctor_notes' => 'nullable|string',
-            'result_date' => 'required|date',
-        ]);
+        $validated = $request->validated();
 
         $hospital = auth()->user()->hospital;
 
@@ -67,7 +65,7 @@ class HospitalResultController extends Controller
             ->where('hospital_id', $hospital->id)
             ->firstOrFail();
 
-        TestResult::updateOrCreate(
+        $testResult = TestResult::updateOrCreate(
             ['appointment_id' => $appointment->id],
             [
                 'patient_id' => $appointment->patient_id,
@@ -82,18 +80,21 @@ class HospitalResultController extends Controller
             $appointment->update(['status' => 'completed']);
         }
 
+        // Send email notification to patient asynchronously
+        SendTestResultUpdated::dispatch($testResult);
+
         return redirect()->back()->with('success', 'Test result updated successfully!');
     }
 
-    public function updateVaccination($id): RedirectResponse
+    public function updateVaccination(UpdateVaccinationRequest $request, $id): RedirectResponse
     {
+        $validated = $request->validated();
+
         $hospital = auth()->user()->hospital;
 
         if (!$hospital) {
             abort(403, 'Hospital profile not found.');
         }
-
-        $validated = $this->validateVaccinationData();
 
         $appointment = Appointment::where('id', $id)
             ->where('hospital_id', $hospital->id)
@@ -115,16 +116,5 @@ class HospitalResultController extends Controller
         $appointment->update(['status' => 'completed']);
 
         return redirect()->back()->with('success', 'Vaccination status updated!');
-    }
-
-    private function validateVaccinationData(): array
-    {
-        request()->validate([
-            'vaccine_id' => 'required|exists:vaccines,id',
-            'dose' => 'required|in:first,second,booster',
-            'vaccination_date' => 'required|date',
-        ]);
-
-        return request()->only(['vaccine_id', 'dose', 'vaccination_date']);
     }
 }

@@ -42,6 +42,7 @@
                                     <th>Hospital</th>
                                     <th>Result</th>
                                     <th>Doctor Notes</th>
+                                    <th>Certificate</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -59,6 +60,15 @@
                                         @endif
                                     </td>
                                     <td class="text-muted">{{ $result->doctor_notes ?? 'No notes' }}</td>
+                                    <td>
+                                        @if($result->result != 'pending')
+                                            <a href="{{ route('patient.results.test.certificate', $result->id) }}" class="btn btn-sm btn-outline-primary rounded-2" target="_blank">
+                                                <i data-lucide="download" style="width: 14px; height: 14px;"></i> Download
+                                            </a>
+                                        @else
+                                            <span class="text-muted small">Not ready</span>
+                                        @endif
+                                    </td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -88,6 +98,7 @@
                                     <th>Vaccine</th>
                                     <th>Dose</th>
                                     <th>Status</th>
+                                    <th>Certificate</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -101,6 +112,15 @@
                                         <span class="badge bg-{{ $record->status == 'completed' ? 'success' : 'warning' }} text-dark rounded-pill px-3 py-2">
                                             {{ ucfirst($record->status) }}
                                         </span>
+                                    </td>
+                                    <td>
+                                        @if($record->status == 'completed')
+                                            <a href="{{ route('patient.results.vaccination.certificate', $record->id) }}" class="btn btn-sm btn-outline-primary rounded-2" target="_blank">
+                                                <i data-lucide="download" style="width: 14px; height: 14px;"></i> Download
+                                            </a>
+                                        @else
+                                            <span class="text-muted small">Not ready</span>
+                                        @endif
                                     </td>
                                 </tr>
                                 @endforeach
