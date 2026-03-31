@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use Illuminate\Support\Facades\Hash;
 
 class PatientProfileController extends Controller
@@ -12,9 +14,9 @@ class PatientProfileController extends Controller
      * Display patient's profile.
      * Shows personal information, contact details.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         /**
          * Get authenticated user's profile data.
@@ -30,9 +32,9 @@ class PatientProfileController extends Controller
      * Patient can edit their name, email, phone, address, city.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
-    public function update(Request $request)
+    public function update(Request $request): RedirectResponse
     {
         /**
          * Validate profile update:
@@ -87,9 +89,9 @@ class PatientProfileController extends Controller
      * Permanently deletes the user account and all related data.
      * Use with caution - consider soft deletes in production.
      *
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
-    public function destroy()
+    public function destroy(): RedirectResponse
     {
         /**
          * Get authenticated user.

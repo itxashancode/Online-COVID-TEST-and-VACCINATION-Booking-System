@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Hospital;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use App\Models\User;
+use App\Models\Hospital;
 
 class HospitalPatientController extends Controller
 {
@@ -11,9 +14,9 @@ class HospitalPatientController extends Controller
      * Display a list of patients with approved appointments.
      * Hospital can view patients who have approved COVID-19 test/vaccination appointments.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         /**
          * Get the logged-in hospital's profile.

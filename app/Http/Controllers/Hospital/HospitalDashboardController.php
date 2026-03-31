@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Hospital;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use App\Models\User;
+use App\Models\Hospital;
+use App\Models\Appointment;
 
 class HospitalDashboardController extends Controller
 {
@@ -12,9 +16,9 @@ class HospitalDashboardController extends Controller
      * Shows overview of hospital's appointments, patients, and latest updates.
      * Each hospital only sees their own data (not other hospitals' data).
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         // WHY: Hospitals need to see their own appointment statistics to manage workload
         // We only show data for the logged-in hospital (data isolation by role)

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Models\Hospital;
 
 class AdminHospitalController extends Controller
@@ -12,9 +14,9 @@ class AdminHospitalController extends Controller
      * Display a listing of all hospitals.
      * Admin can see all registered hospitals and their status.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         /**
          * Retrieve all hospitals with their related user data.
@@ -45,9 +47,9 @@ class AdminHospitalController extends Controller
      * Admin can approve pending hospital requests.
      *
      * @param  int  $id  Hospital ID
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
-    public function approve($id)
+    public function approve($id): RedirectResponse
     {
         /**
          * Find the hospital by ID.
@@ -66,9 +68,9 @@ class AdminHospitalController extends Controller
      * Admin can reject pending hospital requests.
      *
      * @param  int  $id  Hospital ID
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
-    public function reject($id)
+    public function reject($id): RedirectResponse
     {
         /**
          * Find the hospital by ID.

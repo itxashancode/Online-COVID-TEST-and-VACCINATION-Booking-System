@@ -1,27 +1,20 @@
-syntax error, unexpected end of file, expecting "elseif" or "else" or "endif"
-Error
- You are a Detail-Oriented Junior Web Developer. No Emojis!
+Claude, act as a Senior Auditor for this Junior Dev project.
 
-Objective: Fix the "Syntax Error: expecting endif" and the "Lucide Icon" errors across all views.
+1. Fix Syntax & Type-Hints (CRITICAL):
 
-1. Fix Blade Syntax (CRITICAL):
-
-Open resources/views/admin/dashboard.blade.php, resources/views/patient/dashboard.blade.php, and resources/views/hospital/dashboard.blade.php.
-Check every @if, @foreach, and @auth directive. Make sure every single one has a matching @endif, @endforeach, or @endauth.
-IMPORTANT: If you see any @if or @foreach inside a comment {{-- --}}, remove the comments and fix the logic so it works. Dashboard stats cards should NOT be commented out.
+In AdminVaccineController.php and other controllers: Fix the return type hints. If a function returns view(), change the return type to : View or : Renderable. If it returns a redirect, change it to : RedirectResponse. (Import these classes at the top).
+In EmailVerificationPromptController.php: Fix the syntax error on line 13. Look for an unexpected semicolon.
+Blade Audit: Scan all dashboard and layout files. Ensure every @if, @foreach, and @auth is properly closed with @endif, @endforeach, or @endauth.
 2. Fix Lucide Icons:
 
-In layouts/admin.blade.php, layouts/hospital.blade.php, and layouts/patient.blade.php:
-Make sure the Lucide CDN is in the <head>.
-Use valid icon names from Lucide (e.g., activity, shield, user).
-MANDATORY: Add this script exactly before the </body> tag:
-html
-<script>lucide.createIcons();</script>
-3. Model Mass Assignment:
+Ensure lucide.createIcons(); is called at the very end of the layout files.
+Re-check all icon names (e.g., use virus-2 or activity instead of virus).
+3. Data Flow & Cleanliness:
 
-Check all Models in app/Models/. Ensure they all have the $fillable property set with the exact column names from SQL.md.
-4. Data Plumbing (The README Fix):
+Remove ALL emojis from the views. Replace them with Lucide icons.
+Ensure dashboard() and index() methods are actually fetching data from the database and passing it to the view using compact().
+If a Blade block is inside {{-- --}}, evaluate if it belongs in the project. If it does, uncomment it and fix it.
+4. Model Integrity:
 
-Go to the Controllers listed in Section 13 of the README.md.
-Make sure they are passing the data to the views (e.g., return view('...', compact('hospitals'));).
-Style Guide: Comment every single logic block. No Emojis. Follow the folder structure in README.md exactly. Use simple, clean code that a junior dev would understand.
+Ensure all Models have the $fillable property matching the SQL.md schema. No mass assignment errors allowed!
+Style: Comment every logic block. Keep it simple and junior-friendly. Follow README.md strictly.

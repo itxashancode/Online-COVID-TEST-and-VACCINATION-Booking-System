@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use App\Models\User;
 
 class AdminPatientController extends Controller
 {
@@ -11,9 +13,9 @@ class AdminPatientController extends Controller
      * Display a listing of all registered patients.
      * Admin can view all patient profiles and their details.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         /**
          * Query all users with 'patient' role using Spatie Permission.

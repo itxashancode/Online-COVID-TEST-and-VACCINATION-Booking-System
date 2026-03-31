@@ -4,6 +4,11 @@ namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use App\Models\User;
+use App\Models\Appointment;
+use App\Models\TestResult;
+use App\Models\VaccinationRecord;
 
 class PatientDashboardController extends Controller
 {
@@ -12,9 +17,9 @@ class PatientDashboardController extends Controller
      * Shows patient's appointments, recent results, and quick actions.
      * Patients only see their own data (data isolation by role).
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         // WHY: Patients need to see their personal health information and appointments
         // Get the authenticated patient user

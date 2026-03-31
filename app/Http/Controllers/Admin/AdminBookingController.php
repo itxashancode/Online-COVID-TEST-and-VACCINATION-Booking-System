@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use App\Models\Appointment;
 
 class AdminBookingController extends Controller
 {
@@ -11,9 +13,9 @@ class AdminBookingController extends Controller
      * Display all booking details.
      * Admin can view all patient booking details for COVID-19 tests and vaccinations.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         /**
          * Retrieve all appointments with patient and hospital relationships.

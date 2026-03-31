@@ -52,7 +52,7 @@
                     </div>
 
                     <button type="submit" class="btn btn-success">
-                        📥 Export to Excel
+                        Export to Excel
                     </button>
                 </form>
             </div>

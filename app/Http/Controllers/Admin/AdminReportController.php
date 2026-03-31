@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 // use App\Exports\AppointmentsExport; // Will create this export class later
 // use Maatwebsite\Excel\Facades\Excel;
 
@@ -14,9 +16,9 @@ class AdminReportController extends Controller
      * Admin can view COVID-19 test reports with date-wise filtering.
      * Also provides options to export data.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         /**
          * Show report view with filter options:
@@ -39,9 +41,9 @@ class AdminReportController extends Controller
      * Supports filtering by date, week, and month.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @return RedirectResponse
      */
-    public function export(Request $request)
+    public function export(Request $request): RedirectResponse
     {
         /**
          * Validate export parameters:

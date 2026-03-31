@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Models\Vaccine;
 
 class AdminVaccineController extends Controller
@@ -12,9 +14,9 @@ class AdminVaccineController extends Controller
      * Display a listing of all vaccines.
      * Admin can view vaccine inventory and availability status.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         /**
          * Retrieve all vaccines from database.
@@ -31,9 +33,9 @@ class AdminVaccineController extends Controller
      * Show the form for creating a new vaccine.
      * Display form to add new vaccine to the system.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function create()
+    public function create(): View
     {
         /**
          * Show create form view.
@@ -47,9 +49,9 @@ class AdminVaccineController extends Controller
      * Validate input and save new vaccine record.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         /**
          * Validate request data:
@@ -77,14 +79,14 @@ class AdminVaccineController extends Controller
      * Show details of a single vaccine (optional feature).
      *
      * @param  string  $id  Vaccine ID
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function show(string $id)
+    public function show(string $id): View
     {
         /**
          * Find vaccine by ID or fail.
          */
-        // $vaccine = Vaccine::findOrFail($id);
+        $vaccine = Vaccine::findOrFail($id);
 
         return view('admin.vaccines.show', compact('vaccine'));
     }
@@ -94,15 +96,15 @@ class AdminVaccineController extends Controller
      * Display edit form with current vaccine data.
      *
      * @param  string  $id  Vaccine ID
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function edit(string $id)
+    public function edit(string $id): View
     {
         /**
          * Find vaccine by ID.
          * Pass to edit view.
          */
-        // $vaccine = Vaccine::findOrFail($id);
+        $vaccine = Vaccine::findOrFail($id);
 
         return view('admin.vaccines.edit', compact('vaccine'));
     }
@@ -113,9 +115,9 @@ class AdminVaccineController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string  $id  Vaccine ID
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): RedirectResponse
     {
         /**
          * Validate request data (same as store).
@@ -129,8 +131,8 @@ class AdminVaccineController extends Controller
         /**
          * Find vaccine and update with new data.
          */
-        // $vaccine = Vaccine::findOrFail($id);
-        // $vaccine->update($validated);
+        $vaccine = Vaccine::findOrFail($id);
+        $vaccine->update($validated);
 
         return redirect()->route('admin.vaccines.index')->with('success', 'Vaccine updated successfully!');
     }
@@ -140,16 +142,16 @@ class AdminVaccineController extends Controller
      * Delete a vaccine record (use with caution).
      *
      * @param  string  $id  Vaccine ID
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
-    public function destroy(string $id)
+    public function destroy(string $id): RedirectResponse
     {
         /**
          * Find vaccine and delete it.
          * Consider soft deletes for production.
          */
-        // $vaccine = Vaccine::findOrFail($id);
-        // $vaccine->delete();
+        $vaccine = Vaccine::findOrFail($id);
+        $vaccine->delete();
 
         return redirect()->route('admin.vaccines.index')->with('success', 'Vaccine deleted successfully!');
     }

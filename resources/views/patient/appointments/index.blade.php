@@ -64,7 +64,7 @@
                                 @if($appointment->status == 'pending')
                                     <small class="text-muted">Waiting for hospital approval</small>
                                 @elseif($appointment->status == 'approved')
-                                    <small class="text-success fw-bold">✓ Confirmed</small>
+                                    <span class="badge bg-success rounded-pill px-3 py-2">Confirmed</span>
                                 @elseif($appointment->status == 'rejected')
                                     <form action="{{ route('patient.appointments.destroy', $appointment) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this rejected appointment?')">
                                         @csrf

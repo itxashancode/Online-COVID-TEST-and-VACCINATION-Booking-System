@@ -4,6 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+use App\Models\User;
+use App\Models\Hospital;
+use App\Models\Appointment;
+use App\Models\TestResult;
+use App\Models\Vaccine;
 
 class AdminDashboardController extends Controller
 {
@@ -12,9 +19,9 @@ class AdminDashboardController extends Controller
      * Shows overview statistics and navigation for admin users.
      * This method fetches all the data needed for the dashboard cards.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         // WHY: Admin needs to see system-wide statistics at a glance
         // These counts help admin monitor platform health and activity

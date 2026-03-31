@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Hospital;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Models\Appointment;
 use App\Models\TestResult;
 use App\Models\VaccinationRecord;
+use App\Models\Vaccine;
 
 class HospitalResultController extends Controller
 {
@@ -15,23 +18,31 @@ class HospitalResultController extends Controller
      * Hospital can update test results (positive/negative).
      *
      * @param  int  $id  Appointment ID
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function edit($id)
+    public function edit($id): View
     {
         /**
          * Get the logged-in hospital.
          * Find the appointment for this hospital where type is 'covid_test'.
          * Load existing test result if available.
          */
-        // $hospital = auth()->user()->hospital;
-        // $appointment = Appointment::where('id', $id)
-        //     ->where('hospital_id', $hospital->id)
-        //     ->where('appointment_type', 'covid_test')
-        //     ->with('patient')
-        //     ->firstOrFail();
-        //
-        // $testResult = $appointment->testResult;
+        $hospital = auth()->user()->hospital;
+
+        // If hospital profile doesn't exist, abort with error
+        if (!$hospital) {
+            abort(403, 'Hospital profile not found. Please contact admin.');
+        }
+
+        // Find the appointment that belongs to this hospital and is a COVID test
+        $appointment = Appointment::where('id', $id)
+            ->where('hospital_id', $hospital->id)
+            ->where('appointment_type', 'covid_test')
+            ->with('patient')
+            ->firstOrFail();
+
+        // Load existing test result if it exists (could be null for new result)
+        $testResult = $appointment->testResult;
 
         return view('hospital.results.edit', compact('appointment', 'testResult'));
     }
@@ -42,9 +53,9 @@ class HospitalResultController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id  Appointment ID
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): RedirectResponse
     {
         /**
          * Validate incoming data:
@@ -62,27 +73,34 @@ class HospitalResultController extends Controller
          * Find the appointment for this hospital.
          * Create or update the test result record.
          */
-        // $hospital = auth()->user()->hospital;
-        // $appointment = Appointment::where('id', $id)
-        //     ->where('hospital_id', $hospital->id)
-        //     ->firstOrFail();
-        //
-        // // Create or update test result
-        // $testResult = TestResult::updateOrCreate(
-        //     ['appointment_id' => $appointment->id],
-        //     [
-        //         'patient_id' => $appointment->patient_id,
-        //         'hospital_id' => $hospital->id,
-        //         'result' => $validated['result'],
-        //         'doctor_notes' => $validated['doctor_notes'],
-        //         'result_date' => $validated['result_date'],
-        //     ]
-        // );
-        //
-        // // Update appointment status to 'completed' if test done
-        // $appointment->update(['status' => 'completed']);
+        $hospital = auth()->user()->hospital;
 
-        return redirect()->back()->with('success', 'Test result updated successfully! (Demo)');
+        if (!$hospital) {
+            abort(403, 'Hospital profile not found.');
+        }
+
+        $appointment = Appointment::where('id', $id)
+            ->where('hospital_id', $hospital->id)
+            ->firstOrFail();
+
+        // Create or update test result
+        $testResult = TestResult::updateOrCreate(
+            ['appointment_id' => $appointment->id],
+            [
+                'patient_id' => $appointment->patient_id,
+                'hospital_id' => $hospital->id,
+                'result' => $validated['result'],
+                'doctor_notes' => $validated['doctor_notes'],
+                'result_date' => $validated['result_date'],
+            ]
+        );
+
+        // Update appointment status to 'completed' if test is not pending
+        if ($validated['result'] != 'pending') {
+            $appointment->update(['status' => 'completed']);
+        }
+
+        return redirect()->back()->with('success', 'Test result updated successfully!');
     }
 
     /**
@@ -90,46 +108,57 @@ class HospitalResultController extends Controller
      * Hospital can mark vaccination as completed.
      *
      * @param  int  $id  Appointment ID
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
-    public function updateVaccination($id)
+    public function updateVaccination($id): RedirectResponse
     {
         /**
-         * Find the vaccination appointment for this hospital.
-         * Validate that appointment_type is 'vaccination'.
-         * Create or update vaccination record with:
-         * - vaccine_id (which vaccine was given)
-         * - dose (first, second, booster)
-         * - vaccination_date
-         * - status (completed)
+         * Update vaccination status for a patient.
+         * Hospital can mark vaccination as completed.
          */
-        // $hospital = auth()->user()->hospital;
-        // $appointment = Appointment::where('id', $id)
-        //     ->where('hospital_id', $hospital->id)
-        //     ->where('appointment_type', 'vaccination')
-        //     ->firstOrFail();
-        //
-        // // Validate request data (vaccine_id, dose, date)
-        // $validated = $request->validate([
-        //     'vaccine_id' => 'required|exists:vaccines,id',
-        //     'dose' => 'required|in:first,second,booster',
-        //     'vaccination_date' => 'required|date',
-        // ]);
-        //
-        // VaccinationRecord::updateOrCreate(
-        //     ['appointment_id' => $appointment->id],
-        //     [
-        //         'patient_id' => $appointment->patient_id,
-        //         'hospital_id' => $hospital->id,
-        //         'vaccine_id' => $validated['vaccine_id'],
-        //         'dose' => $validated['dose'],
-        //         'vaccination_date' => $validated['vaccination_date'],
-        //         'status' => 'completed',
-        //     ]
-        // );
-        //
-        // $appointment->update(['status' => 'completed']);
+        $hospital = auth()->user()->hospital;
 
-        return redirect()->back()->with('success', 'Vaccination status updated! (Demo)');
+        if (!$hospital) {
+            abort(403, 'Hospital profile not found.');
+        }
+
+        // Validate request data (vaccine_id, dose, date)
+        $validated = $this->validateVaccinationData();
+
+        $appointment = Appointment::where('id', $id)
+            ->where('hospital_id', $hospital->id)
+            ->where('appointment_type', 'vaccination')
+            ->firstOrFail();
+
+        VaccinationRecord::updateOrCreate(
+            ['appointment_id' => $appointment->id],
+            [
+                'patient_id' => $appointment->patient_id,
+                'hospital_id' => $hospital->id,
+                'vaccine_id' => $validated['vaccine_id'],
+                'dose' => $validated['dose'],
+                'vaccination_date' => $validated['vaccination_date'],
+                'status' => 'completed',
+            ]
+        );
+
+        $appointment->update(['status' => 'completed']);
+
+        return redirect()->back()->with('success', 'Vaccination status updated!');
+    }
+
+    /**
+     * Validate vaccination form data.
+     * Extracted to keep updateVaccination clean.
+     */
+    private function validateVaccinationData()
+    {
+        request()->validate([
+            'vaccine_id' => 'required|exists:vaccines,id',
+            'dose' => 'required|in:first,second,booster',
+            'vaccination_date' => 'required|date',
+        ]);
+
+        return request()->only(['vaccine_id', 'dose', 'vaccination_date']);
     }
 }

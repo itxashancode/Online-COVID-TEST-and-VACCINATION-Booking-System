@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use App\Models\User;
+use App\Models\TestResult;
+use App\Models\VaccinationRecord;
 
 class PatientResultController extends Controller
 {
@@ -11,9 +15,9 @@ class PatientResultController extends Controller
      * Display patient's test results and vaccination reports.
      * Shows COVID-19 test results and vaccination history.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         // Get the authenticated patient user
         $user = auth()->user();

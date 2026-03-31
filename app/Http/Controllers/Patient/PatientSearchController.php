@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use App\Models\Hospital;
 
 class PatientSearchController extends Controller
@@ -14,9 +15,9 @@ class PatientSearchController extends Controller
      * Requirement: Only show hospitals where status = 'approved' (README Section 11)
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         /**
          * Build query starting point:

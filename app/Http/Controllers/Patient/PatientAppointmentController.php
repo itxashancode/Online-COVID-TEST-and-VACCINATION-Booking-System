@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Models\Hospital;
 use App\Models\Appointment;
 
@@ -14,9 +16,9 @@ class PatientAppointmentController extends Controller
      * Patient can select hospital and appointment type (covid test or vaccination).
      *
      * @param  \Illuminate\Http\Request  $request  Contains hospital_id (optional)
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function create(Request $request)
+    public function create(Request $request): View
     {
         /**
          * If hospital_id is provided via query parameter (e.g., from search page),
@@ -43,9 +45,9 @@ class PatientAppointmentController extends Controller
      * Patient submits booking request for COVID test or vaccination.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         /**
          * Validate appointment data:
@@ -67,27 +69,27 @@ class PatientAppointmentController extends Controller
          * Create appointment for the authenticated patient.
          * Default status is 'pending' - needs hospital approval.
          */
-        // Appointment::create([
-        //     'patient_id' => auth()->id(),
-        //     'hospital_id' => $validated['hospital_id'],
-        //     'appointment_type' => $validated['appointment_type'],
-        //     'appointment_date' => $validated['appointment_date'],
-        //     'appointment_time' => $validated['appointment_time'],
-        //     'status' => 'pending',
-        //     'notes' => $validated['notes'],
-        // ]);
+        Appointment::create([
+            'patient_id' => auth()->id(),
+            'hospital_id' => $validated['hospital_id'],
+            'appointment_type' => $validated['appointment_type'],
+            'appointment_date' => $validated['appointment_date'],
+            'appointment_time' => $validated['appointment_time'],
+            'status' => 'pending',
+            'notes' => $validated['notes'] ?? null,
+        ]);
 
         return redirect()->route('patient.appointments.index')
-            ->with('success', 'Appointment request sent successfully! (Demo)');
+            ->with('success', 'Appointment request sent successfully!');
     }
 
     /**
      * Display all appointments for the logged-in patient.
      * Shows pending, approved, rejected, and completed appointments.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         /**
          * Get all appointments for the authenticated user.

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Hospital;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use App\Models\Appointment;
 
 class HospitalAppointmentController extends Controller
@@ -12,9 +14,9 @@ class HospitalAppointmentController extends Controller
      * Display all appointment requests for the logged-in hospital.
      * Shows pending, approved, rejected, and completed appointments.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function index()
+    public function index(): View
     {
         /**
          * Get the authenticated hospital's profile.
@@ -58,9 +60,9 @@ class HospitalAppointmentController extends Controller
      * Hospital can approve COVID test or vaccination appointments.
      *
      * @param  int  $id  Appointment ID
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
-    public function approve($id)
+    public function approve($id): RedirectResponse
     {
         /**
          * Find the appointment that belongs to this hospital.
@@ -80,9 +82,9 @@ class HospitalAppointmentController extends Controller
      * Hospital can decline appointment requests.
      *
      * @param  int  $id  Appointment ID
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
-    public function reject($id)
+    public function reject($id): RedirectResponse
     {
         /**
          * Find appointment belonging to this hospital.
