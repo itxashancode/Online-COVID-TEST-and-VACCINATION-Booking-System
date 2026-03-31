@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Patient Dashboard') - COVID Booking System</title>
+    <title>@yield('title', 'Patient Portal') - MED-Digi</title>
     <!-- Google Fonts: Inter - Consistent professional typography -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- GLOBAL ENHANCEMENTS -->
+    <link rel="stylesheet" href="{{ asset('css/modern-health.css') }}">
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -17,7 +19,7 @@
             background-color: #f8f9fa;
         }
 
-        /* PATIENT THEME VARIABLES: Trust Blue (#3b82f6) - Why? Blue is calming, trustworthy, and welcoming. It reduces anxiety for patients booking medical appointments. */
+        /* PATIENT THEME VARIABLES: Trust Blue (#3b82f6) */
         :root {
             --patient-primary: #3b82f6;
             --patient-primary-dark: #2563eb;
@@ -98,13 +100,16 @@
 </head>
 <body>
     <!-- Navigation Bar -->
-    <!-- Sticky navbar ensures patient can always access navigation, even on long pages -->
+    <!-- Sticky navigation -->
     <nav class="navbar navbar-dark sticky-top shadow-sm">
         <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('patient.dashboard') }}">
-                <i data-lucide="user" style="width: 28px; height: 28px;"></i>
-                <span>Patient Portal</span>
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('dashboard') }}">
+                <i data-lucide="heart-pulse" style="width: 28px; height: 28px;"></i>
+                <span>MED-Digi</span>
             </a>
+            <button class="navbar-toggler d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+                <i data-lucide="menu" class="text-secondary"></i>
+            </button>
             <div class="d-flex align-items-center gap-3">
                 <span class="text-light">{{ auth()->user()->name }}</span>
                 <form method="POST" action="{{ route('logout') }}">

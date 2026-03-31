@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Hospital Dashboard') - COVID Booking System</title>
-    <!-- Google Fonts: Inter - Why? Consistent, professional typography across all portals -->
+    <title>@yield('title', 'Hospital Portal') - MED-Digi</title>
+    <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- GLOBAL ENHANCEMENTS -->
+    <link rel="stylesheet" href="{{ asset('css/modern-health.css') }}">
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -17,7 +19,7 @@
             background-color: #f8f9fa;
         }
 
-        /* HOSPITAL THEME VARIABLES: Emerald Green (#10b981) - Why? Green is the universal color of healthcare, healing, and medical professionalism. It's calming and builds trust. */
+        /* HOSPITAL THEME VARIABLES: Emerald Green (#10b981) */
         :root {
             --hospital-primary: #10b981;
             --hospital-primary-dark: #059669;
@@ -98,15 +100,19 @@
 </head>
 <body>
     <!-- Navigation Bar -->
-    <!-- Why sticky-top? Important for hospital staff managing time-sensitive appointments -->
+    <!-- Sticky navigation -->
     <nav class="navbar navbar-dark sticky-top shadow-sm">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('hospital.dashboard') }}">
                 <i data-lucide="hospital" style="width: 28px; height: 28px;"></i>
-                <span>Hospital Portal</span>
+                <span>MED-Digi</span>
             </a>
+            <!-- MOBILE TOGGLE -->
+            <button class="navbar-toggler d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+                <i data-lucide="menu" class="text-white"></i>
+            </button>
             <div class="d-flex align-items-center gap-3">
-                <span class="text-light">{{ auth()->user()->name }}</span>
+                <span class="text-light d-none d-sm-inline">Welcome, {{ auth()->user()->name }}</span>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="btn btn-outline-light btn-sm rounded-pill">Logout</button>
@@ -115,32 +121,70 @@
         </div>
     </nav>
 
-    <div class="container-fluid mt-4">
-        <!-- Flash Messages -->
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar d-md-block collapse bg-white border-end shadow-sm" id="sidebarMenu">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('hospital.dashboard') || request()->is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+                                <i data-lucide="layout-dashboard"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                        
+                        {{-- Only show management links if hospital is approved --}}
+                        @if(auth()->user()->hospital && auth()->user()->hospital->status == 'approved')
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('hospital.patients.*') ? 'active' : '' }}" href="{{ route('hospital.patients.index') }}">
+                                <i data-lucide="users"></i>
+                                Patients
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('hospital.appointments.*') ? 'active' : '' }}" href="{{ route('hospital.appointments.index') }}">
+                                <i data-lucide="calendar"></i>
+                                Appointments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('hospital.results.*') ? 'active' : '' }}" href="{{ route('hospital.results.index') }}">
+                                <i data-lucide="file-text"></i>
+                                Test Results
+                            </a>
+                        </li>
+                        @endif
+                    </ul>
+                </div>
             </div>
-        @endif
 
-        @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
+            <!-- Main Content Area -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <!-- Flash Messages -->
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+                @if(session('info'))
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        {{ session('info') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
 
-        <!-- Breadcrumb -->
-        <nav aria-label="breadcrumb" class="mb-3">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('hospital.dashboard') }}">Dashboard</a></li>
-                @yield('breadcrumb')
-            </ol>
-        </nav>
-
-        <!-- Page Content -->
-        @yield('content')
+                <!-- Page Content -->
+                @yield('content')
+            </main>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

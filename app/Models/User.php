@@ -22,11 +22,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'phone',       // Contact phone number
-        'address',     // Physical address
-        'city',        // City of residence
-        'user_type',   // admin, hospital, patient (using roles primarily)
-        'status',      // active, inactive, pending
+        'phone',
+        'address',
+        'city',
+        'user_type',
+        'status',
     ];
 
     /**

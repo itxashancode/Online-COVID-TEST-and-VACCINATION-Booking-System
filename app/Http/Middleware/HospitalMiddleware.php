@@ -27,12 +27,20 @@ class HospitalMiddleware
 
         /**
          * Check if user has 'hospital' role.
-         * Also verify hospital account is approved (optional additional security).
-         * Note: Hospital status check in Hospital model would be: auth()->user()->hospital->status == 'approved'
+         * Also verify hospital account is approved (Critical Security Check).
          */
         if (!auth()->user()->hasRole('hospital')) {
             return redirect()->route('dashboard')
                 ->with('error', 'Access denied. Hospital account required.');
+        }
+
+        /**
+         * Verify hospital profile is approved.
+         * Note: Checks the relation 'hospital' status field.
+         */
+        if (auth()->user()->hospital && auth()->user()->hospital->status !== 'approved') {
+            return redirect()->route('dashboard')
+                ->with('error', 'Your hospital account is currently ' . auth()->user()->hospital->status . '. Please wait for admin approval.');
         }
 
         return $next($request);

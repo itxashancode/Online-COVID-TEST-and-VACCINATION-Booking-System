@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Admin Dashboard') - COVID Booking System</title>
-    <!-- Google Fonts: Inter - Why? Inter is a professional, highly readable font designed for computer screens. It's neutral and modern, perfect for admin interfaces. -->
+    <title>@yield('title', 'Admin Dashboard') - MED-Digi</title>
+    <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap 5 CSS from CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Lucide Icons CDN - Why? Lucide provides beautiful, consistent icons that replace emojis for a professional look. They're lightweight and scale perfectly. -->
+    <!-- GLOBAL ENHANCEMENTS -->
+    <link rel="stylesheet" href="{{ asset('css/modern-health.css') }}">
+    <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         /* GLOBAL TYPOGRAPHY: Apply Inter font to entire app for consistency */
@@ -17,16 +19,14 @@
             background-color: #f8f9fa;
         }
 
-        /* ADMIN THEME VARIABLES: Slate/Dark blue-gray theme (#0f172a) - Why? Dark blue conveys authority, professionalism, and seriousness appropriate for system administrators. */
+        /* ADMIN THEME VARIABLES: Slate/Dark blue-gray theme (#0f172a) */
         :root {
             --admin-primary: #0f172a;
             --admin-primary-light: #334155;
             --admin-accent: #3b82f6;
         }
 
-        /* NAVBAR: Make sticky with shadow for depth */
-        /* Why sticky-top? Keeps navigation accessible while scrolling long pages - improves UX */
-        /* Why shadow-sm? Adds subtle vertical separation between nav and content */
+        /* NAVBAR: Sticky with shadow */
         .navbar {
             background-color: var(--admin-primary) !important;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -37,7 +37,7 @@
             font-size: 1.25rem;
         }
 
-        /* SIDEBAR: Light theme with borders - Why? Modern admin panels use light backgrounds with colored accents instead of dark sidebars. This is more readable and less overwhelming. */
+        /* SIDEBAR: Light theme with borders */
         .sidebar {
             min-height: 100vh;
             background-color: #ffffff;
@@ -55,13 +55,13 @@
             gap: 0.75rem;
         }
 
-        /* HOVER STATE: Subtle background on hover - Why? Visual feedback tells users this element is interactive */
+        /* HOVER STATE: Subtle background on hover */
         .sidebar .nav-link:hover {
             color: var(--admin-primary);
             background-color: #f1f5f9;
         }
 
-        /* ACTIVE STATE: Highlight current page - Why? Users need to know where they are in the system. High contrast with theme color shows active section */
+        /* ACTIVE STATE: Highlight current page */
         .sidebar .nav-link.active {
             color: var(--admin-accent);
             background-color: #eff6ff;
@@ -78,7 +78,7 @@
             padding-top: 1rem;
         }
 
-        /* CARD HOVER LIFT EFFECT: Why? Small animations create delight and indicate interactivity. Users subconsciously associate lifted cards with "clickability" */
+        /* Card hover lift effect */
         .hover-lift {
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
@@ -88,8 +88,7 @@
             box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.1) !important;
         }
 
-        /* THEME-SPECIFIC COLORS: Reusable utility classes */
-        /* Why utility classes? Makes it easy to apply theme colors anywhere without repeating hex values */
+        /* Theme-specific utility classes */
         .text-admin-theme { color: var(--admin-primary) !important; }
         .bg-admin-light { background-color: #eff6ff !important; }
         .border-admin { border-color: var(--admin-primary) !important; }
@@ -102,7 +101,7 @@
         .text-patient { color: var(--patient-primary) !important; }
         .bg-patient { background-color: #eff6ff !important; }
 
-        /* ICON WRAPPER: Standard size for dashboard card icons - Why? Consistency in icon presentation creates visual harmony */
+        /* Icon wrapper: standard size for dashboard icons */
         .icon-wrapper {
             display: flex;
             align-items: center;
@@ -114,7 +113,7 @@
             color: var(--admin-accent);
         }
 
-        /* EMPTY STATE: Helpful design pattern when no data exists - Why? Empty states are opportunities to guide users, not dead ends. They should explain what's missing and provide a next step. */
+        /* Empty state: guide users when no data exists */
         .empty-state {
             text-align: center;
             padding: 3rem 1rem;
@@ -157,21 +156,22 @@
 </head>
 <body>
     <!-- Navigation Bar -->
-    <!-- Why sticky-top? Keeps nav visible on scroll - critical for admin managing lots of data -->
-    <!-- Why shadow-sm? Adds depth, separates nav from content -->
+    <!-- Sticky navigation for easy access -->
     <nav class="navbar navbar-dark sticky-top shadow-sm">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('admin.dashboard') }}">
-                <!-- Lucide Icon: layout-dashboard - Why? Represents admin control panel -->
                 <i data-lucide="layout-dashboard" style="width: 28px; height: 28px;"></i>
-                <span>COVID Admin</span>
+                <span>MED-Digi</span>
             </a>
+            <!-- MOBILE TOGGLE -->
+            <button class="navbar-toggler d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+                <i data-lucide="menu" class="text-white"></i>
+            </button>
             <div class="d-flex align-items-center gap-3">
                 <span class="text-light">Welcome, {{ auth()->user()->name }}</span>
                 <!-- Logout link -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <!-- Why rounded-pill? Pill-shaped buttons feel more modern and are easier to click on mobile -->
                     <button type="submit" class="btn btn-outline-light btn-sm rounded-pill">Logout</button>
                 </form>
             </div>
@@ -180,9 +180,7 @@
 
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
-            <!-- Why d-md-block? Hidden on mobile by default, shown on medium+ screens -->
-            <div class="col-md-3 col-lg-2 d-md-block sidebar collapse show">
+            <div class="col-md-3 col-lg-2 sidebar d-md-block collapse" id="sidebarMenu">
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
@@ -226,7 +224,7 @@
             </div>
 
             <!-- Main Content -->
-            <!-- Why these classes? col-md-9 offsets the 3-column sidebar, col-lg-10 offsets the 2-column on large screens -->
+            <!-- Offset for sidebar -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
                 <!-- Flash Messages -->
                 <!-- Bootstrap's alert component is accessible and dismissible. We show success/error messages from Laravel sessions. -->
@@ -250,9 +248,7 @@
         </div>
     </div>
 
-    <!-- Bootstrap 5 JS from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Initialize Lucide Icons - Why? This call renders all <i data-lucide="..."> elements as SVG icons -->
     <script>lucide.createIcons();</script>
     @yield('scripts')
 </body>

@@ -57,23 +57,26 @@
                             <td>{{ $hospital->created_at->format('M d, Y') }}</td>
                             <td>
                                 @if($hospital->status == 'pending')
-                                    <form action="{{ route('admin.hospitals.approve', $hospital) }}" method="POST" class="d-inline me-1">
+                                    <form action="{{ route('admin.hospitals.approve', $hospital->id) }}" method="POST" class="d-inline me-1">
                                         @csrf
-                                        @method('POST')
-                                        <button type="submit" class="btn btn-sm btn-outline-success rounded-2" onclick="return confirm('Approve this hospital?')">
-                                            <i data-lucide="check" class="me-1" style="width: 14px; height: 14px;"></i>Approve
+                                        <button type="submit" class="btn btn-sm btn-outline-success rounded-2" title="Approve">
+                                            <i data-lucide="check" style="width: 14px; height: 14px;"></i>
                                         </button>
                                     </form>
-                                    <form action="{{ route('admin.hospitals.reject', $hospital) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('admin.hospitals.reject', $hospital->id) }}" method="POST" class="d-inline me-1">
                                         @csrf
-                                        @method('POST')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-2" onclick="return confirm('Reject this hospital?')">
-                                            <i data-lucide="x" class="me-1" style="width: 14px; height: 14px;"></i>Reject
+                                        <button type="submit" class="btn btn-sm btn-outline-warning rounded-2" title="Reject">
+                                            <i data-lucide="x" style="width: 14px; height: 14px;"></i>
                                         </button>
                                     </form>
-                                @else
-                                    <span class="text-muted small">No actions</span>
                                 @endif
+                                <form action="{{ route('admin.hospitals.destroy', $hospital->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this hospital and its user account permanently?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-2" title="Delete">
+                                        <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                         @endforeach
@@ -83,7 +86,6 @@
 
             {{-- Pagination if enabled: {{ $hospitals->links() }} --}}
         @else
-            <!-- EMPTY STATE: No hospitals registered yet -->
             <div class="empty-state">
                 <i data-lucide="building" style="width: 64px; height: 64px;"></i>
                 <h5 class="text-muted">No Hospitals Registered Yet</h5>

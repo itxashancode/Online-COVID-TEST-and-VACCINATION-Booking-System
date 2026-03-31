@@ -15,7 +15,6 @@
     </div>
 </div>
 
-<!-- Search Form -->
 <div class="card border-0 shadow-sm rounded-4 mb-4">
     <div class="card-body">
         <form action="{{ route('patient.search') }}" method="GET" class="row g-3 align-items-end">
@@ -41,7 +40,6 @@
     </div>
 </div>
 
-<!-- Results -->
 <div class="card border-0 shadow-sm rounded-4">
     <div class="card-header bg-transparent border-0 pt-4 pb-3">
         <h5 class="fw-bold mb-0">
@@ -84,9 +82,8 @@
                 @endforeach
             </div>
 
-            {{-- Pagination: {{ $hospitals->links() }} --}
+            {{-- Pagination: {{ $hospitals->links() }} --}}
         @else
-            <!-- EMPTY STATE: No hospitals found -->
             <div class="empty-state">
                 <i data-lucide="hospital" style="width: 64px; height: 64px;"></i>
                 <h5 class="text-muted">No Hospitals Found</h5>

@@ -39,9 +39,15 @@ Route::get('/', function () {
 // ============ DASHBOARD REDIRECT ============
 // After login, redirect users to appropriate dashboard based on role
 Route::get('/dashboard', function () {
-    if (auth()->user()->hasRole('admin')) {
+    $user = auth()->user();
+    
+    if ($user->hasRole('admin')) {
         return redirect()->route('admin.dashboard');
-    } elseif (auth()->user()->hasRole('hospital')) {
+    } elseif ($user->hasRole('hospital')) {
+        // PREVENT REDIRECT LOOP: Check status before sending to hospital.dashboard
+        if ($user->hospital && $user->hospital->status !== 'approved') {
+            return view('hospital.pending', ['status' => $user->hospital->status]);
+        }
         return redirect()->route('hospital.dashboard');
     } else {
         return redirect()->route('patient.dashboard');
@@ -56,17 +62,20 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
 
     // Patients Management
     Route::get('/patients', [AdminPatientController::class, 'index'])->name('patients.index');
+    Route::get('/patients/{id}', [AdminPatientController::class, 'show'])->name('patients.show');
 
     // Hospitals Management
     Route::get('/hospitals', [AdminHospitalController::class, 'index'])->name('hospitals.index');
     Route::post('/hospitals/{id}/approve', [AdminHospitalController::class, 'approve'])->name('hospitals.approve');
     Route::post('/hospitals/{id}/reject', [AdminHospitalController::class, 'reject'])->name('hospitals.reject');
+    Route::delete('/hospitals/{id}', [AdminHospitalController::class, 'destroy'])->name('hospitals.destroy');
 
     // Vaccines Management (Full CRUD)
     Route::resource('vaccines', AdminVaccineController::class);
 
     // Bookings Viewing
     Route::get('/bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
+    Route::delete('/bookings/{id}', [AdminBookingController::class, 'destroy'])->name('bookings.destroy');
 
     // Reports & Exports
     Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
@@ -88,6 +97,7 @@ Route::prefix('hospital')->middleware(['auth', 'hospital'])->name('hospital.')->
     Route::post('/appointments/{id}/reject', [HospitalAppointmentController::class, 'reject'])->name('appointments.reject');
 
     // Update Test Results & Vaccination Status
+    Route::get('/results', [HospitalResultController::class, 'index'])->name('results.index');
     Route::get('/results/{id}/edit', [HospitalResultController::class, 'edit'])->name('results.edit');
     Route::put('/results/{id}', [HospitalResultController::class, 'update'])->name('results.update');
 

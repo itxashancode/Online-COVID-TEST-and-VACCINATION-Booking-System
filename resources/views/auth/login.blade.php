@@ -1,128 +1,161 @@
-{{-- Enhanced Login Page with Floating Card Design --}}
+{{-- Premium Login Page: Glassmorphism + Dynamic Aesthetic --}}
 <x-guest-layout>
-    <!-- CONTAINER: Full viewport height with centered content -->
-    <!-- Why? Creates a focused, distraction-free login experience -->
-    <div class="container-fluid d-flex align-items-center justify-content-center min-vh-100 py-4">
-        <div class="row w-100 justify-content-center">
-            <div class="col-md-6 col-lg-5 col-xl-4">
-                <!-- FLOATING CARD: This creates the floating card effect -->
-                <!-- Why border-0? Clean borderless design looks more modern -->
-                <!-- Why shadow-lg? Large shadow creates depth, making card appear to float -->
-                <!-- Why rounded-4? Soft corners (1rem) are inviting and friendly -->
-                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-                    <!-- CARD HEADER: Blue gradient background -->
-                    <div class="bg-gradient d-block py-4 px-5 text-center" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
-                        <!-- LUCIDE ICON: shield-check - Why? Security, protection, trust -->
-                        <i data-lucide="shield-check" class="text-white mb-3" style="width: 64px; height: 64px;"></i>
-                        <h3 class="text-white fw-bold mb-1">Welcome Back</h3>
-                        <p class="text-white-50 mb-0 small">Sign in to your COVID Booking account</p>
-                    </div>
+    <style>
+        /* RESET & BASE */
+        .min-vh-100 { min-height: 100vh; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        .header-gradient {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            padding: 40px 20px;
+            text-align: center;
+            color: white;
+        }
+        .input-group-custom {
+            margin-bottom: 20px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1.5px solid #e2e8f0;
+            background: #f8fafc;
+            transition: all 0.3s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+        .btn-submit {
+            background: #2563eb;
+            color: white;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            width: 100%;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+        }
+        .btn-submit:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.2);
+        }
+        .btn-outline {
+            border: 2px solid #e2e8f0;
+            background: transparent;
+            padding: 12px;
+            border-radius: 12px;
+            width: 100%;
+            font-weight: 600;
+            color: #475569;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        .btn-outline:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            color: #1e293b;
+        }
+        .divider {
+            height: 1px;
+            background: #e2e8f0;
+            width: 100%;
+            margin: 24px 0;
+            position: relative;
+        }
+        .divider::after {
+            content: "or";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 0 12px;
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+    </style>
 
-                    <!-- CARD BODY: Form content -->
-                    <div class="card-body p-5">
-                        <!-- Session Status -->
-                        <x-auth-session-status class="mb-4" :status="session('status')" />
+    <div class="glass-card mx-auto" style="max-width: 450px;">
+        <!-- HEADER -->
+        <div class="header-gradient">
+            <i data-lucide="shield-plus" style="width: 56px; height: 56px; margin-bottom: 16px;"></i>
+            <h2 style="font-size: 1.75rem; font-weight: 800; margin: 0;">Welcome Back</h2>
+            <p style="color: rgba(255, 255, 255, 0.7); margin: 8px 0 0; font-size: 0.9rem;">Access your MED-Digi health profile</p>
+        </div>
 
-                        <form method="POST" action="{{ route('login') }}">
-                            @csrf
+        <!-- FORM BODY -->
+        <div style="padding: 40px;">
+            <!-- Session Status -->
+            <x-auth-session-status class="mb-4" :status="session('status')" />
 
-                            <!-- Email Address Field -->
-                            <div class="mb-3">
-                                <x-input-label for="email" :value="__('Email Address')" class="fw-medium" />
-                                <!-- Why rounded-2? Slight rounding (0.5rem) is modern and professional -->
-                                <x-text-input
-                                    id="email"
-                                    class="form-control rounded-2 mt-1"
-                                    type="email"
-                                    name="email"
-                                    :value="old('email')"
-                                    required
-                                    autofocus
-                                    autocomplete="username"
-                                    placeholder="you@example.com" />
-                                <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                            </div>
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
 
-                            <!-- Password Field -->
-                            <div class="mb-3">
-                                <x-input-label for="password" :value="__('Password')" class="fw-medium" />
-                                <x-text-input
-                                    id="password"
-                                    class="form-control rounded-2 mt-1"
-                                    type="password"
-                                    name="password"
-                                    required
-                                    autocomplete="current-password"
-                                    placeholder="Enter your password" />
-                                <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                            </div>
-
-                            <!-- Remember Me + Forgot Password Row -->
-                            <div class="row align-items-center mb-4">
-                                <div class="col-6">
-                                    <div class="form-check">
-                                        <input
-                                            id="remember_me"
-                                            type="checkbox"
-                                            class="form-check-input rounded"
-                                            name="remember"
-                                            style="border-radius: 4px;">
-                                        <label class="form-check-label ms-2 small" for="remember_me">
-                                            Remember me
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-6 text-end">
-                                    @if (Route::has('password.request'))
-                                        <a class="text-decoration-none small" href="{{ route('password.request') }}">
-                                            Forgot password?
-                                        </a>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <!-- Submit Button -->
-                            <!-- Why btn-lg? Larger text (1rem) makes CTA more prominent -->
-                            <!-- Why w-100? Full width is easier to tap on mobile -->
-                            <div class="d-grid mb-4">
-                                <button type="submit" class="btn btn-primary btn-lg w-100 rounded-2 shadow-sm fw-semibold">
-                                    Sign In
-                                </button>
-                            </div>
-                        </form>
-
-                        <!-- Divider with "or" text -->
-                        <div class="text-center position-relative my-4">
-                            <hr class="text-muted opacity-25">
-                            <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 small text-muted">or</span>
-                        </div>
-
-                        <!-- Register Link -->
-                        <!-- Why? Separate section to avoid confusion with login -->
-                        <div class="text-center">
-                            <p class="text-muted small mb-3">
-                                Don't have an account?
-                            </p>
-                            <a href="{{ route('register') }}" class="btn btn-outline-primary w-100 rounded-2 fw-medium">
-                                <i data-lucide="user-plus" class="me-2" style="width: 18px; height: 18px;"></i>
-                                Create Account
-                            </a>
-                            <p class="text-muted small mt-3 mb-0">
-                                Register as Patient, Hospital, or Admin
-                            </p>
-                        </div>
-                    </div>
+                <!-- Email Address -->
+                <div class="input-group-custom">
+                    <label style="display: block; font-weight: 600; font-size: 0.875rem; color: #475569; margin-bottom: 6px;">Email Address</label>
+                    <input id="email" class="form-input" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" placeholder="name@example.com" />
+                    <x-input-error :messages="$errors->get('email')" style="margin-top: 8px; color: #ef4444; font-size: 0.8rem;" />
                 </div>
 
-                <!-- Footer text -->
-                <div class="text-center mt-4">
-                    <p class="text-muted small opacity-75">
-                        © 2024 COVID Booking System. All rights reserved.
-                    </p>
+                <!-- Password -->
+                <div class="input-group-custom">
+                    <label style="display: block; font-weight: 600; font-size: 0.875rem; color: #475569; margin-bottom: 6px;">Password</label>
+                    <input id="password" class="form-input" type="password" name="password" required autocomplete="current-password" placeholder="••••••••" />
+                    <x-input-error :messages="$errors->get('password')" style="margin-top: 8px; color: #ef4444; font-size: 0.8rem;" />
                 </div>
+
+                <!-- REMEMBER & FORGOT -->
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #64748b; cursor: pointer;">
+                        <input id="remember_me" type="checkbox" name="remember" style="width: 16px; height: 16px; border-radius: 4px;">
+                        Remember me
+                    </label>
+                    @if (Route::has('password.request'))
+                        <a href="{{ route('password.request') }}" style="font-size: 0.875rem; color: #2563eb; text-decoration: none; font-weight: 500;">Forgot?</a>
+                    @endif
+                </div>
+
+                <!-- SUBMIT -->
+                <button type="submit" class="btn-submit">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="divider"></div>
+
+            <!-- FOOTER LINKS -->
+            <div style="text-align: center;">
+                <p style="color: #64748b; font-size: 0.875rem; margin-bottom: 16px;">Don't have an account?</p>
+                <a href="{{ route('register') }}" class="btn-outline">
+                    <i data-lucide="user-plus" style="width: 18px; height: 18px;"></i>
+                    Create New Account
+                </a>
+                <p style="margin-top: 20px; font-size: 0.75rem; color: #94a3b8;">&copy; {{ date('Y') }} MED-Digi Healthcare</p>
             </div>
         </div>
     </div>
 
-    <!-- Why no guest-layout wrapper content? The <x-guest-layout> is still used for Laravel inertia, but we're overriding the full content with our floating card design -->
+    <!-- SCRIPTS -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
 </x-guest-layout>

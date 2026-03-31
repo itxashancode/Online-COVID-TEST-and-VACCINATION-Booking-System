@@ -12,11 +12,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        // STEP 1: Create roles and default admin user
+        $this->call(RolesAndAdminSeeder::class);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // STEP 2: Create demo data (hospitals, patients, vaccines)
+        // $this->call(DemoDataSeeder::class);
     }
 }

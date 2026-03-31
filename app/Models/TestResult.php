@@ -24,6 +24,15 @@ class TestResult extends Model
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'result_date' => 'date',
+    ];
+
+    /**
      * TestResult belongs to an Appointment.
      * Each test result is linked to one appointment.
      *

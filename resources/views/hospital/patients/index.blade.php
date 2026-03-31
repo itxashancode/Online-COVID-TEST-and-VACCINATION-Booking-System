@@ -1,4 +1,3 @@
-{{-- Hospital - Patients with Approved Appointments --}}
 @extends('layouts.hospital')
 
 @section('title', 'Patients')
@@ -46,7 +45,6 @@
                 </table>
             </div>
         @else
-            <!-- EMPTY STATE: No patients with approved appointments yet -->
             <div class="empty-state">
                 <i data-lucide="users" style="width: 64px; height: 64px;"></i>
                 <h5 class="text-muted">No Patients Yet</h5>

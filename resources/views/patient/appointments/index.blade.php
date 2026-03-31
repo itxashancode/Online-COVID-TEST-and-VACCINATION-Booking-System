@@ -1,4 +1,3 @@
-{{-- Patient - My Appointments --}}
 @extends('layouts.patient')
 
 @section('title', 'My Appointments')
@@ -81,9 +80,8 @@
                 </table>
             </div>
 
-            {{-- Pagination if needed: {{ $appointments->links() }} --}
+            {{-- Pagination if needed: {{ $appointments->links() }} --}}
         @else
-            <!-- EMPTY STATE: No appointments yet -->
             <div class="empty-state">
                 <i data-lucide="calendar" style="width: 64px; height: 64px;"></i>
                 <h5 class="text-muted">No Appointments Yet</h5>

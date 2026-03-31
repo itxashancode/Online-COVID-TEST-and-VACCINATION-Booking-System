@@ -6,51 +6,24 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-// use App\Exports\AppointmentsExport; // Will create this export class later
-// use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Appointment;
+use App\Exports\AppointmentsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminReportController extends Controller
 {
-    /**
-     * Display the reports dashboard.
-     * Admin can view COVID-19 test reports with date-wise filtering.
-     * Also provides options to export data.
-     *
-     * @return View
-     */
     public function index(): View
     {
-        /**
-         * Show report view with filter options:
-         * - Filter by date range
-         * - Filter by week
-         * - Filter by month
-         * - View COVID test results
-         */
-        // $appointments = Appointment::with(['patient', 'hospital', 'testResult'])
-        //     ->where('appointment_type', 'covid_test')
-        //     ->latest()
-        //     ->get();
+        $appointments = Appointment::with(['patient', 'hospital', 'testResult'])
+            ->where('appointment_type', 'covid_test')
+            ->latest()
+            ->get();
 
-        return view('admin.reports.index');
+        return view('admin.reports.index', compact('appointments'));
     }
 
-    /**
-     * Export appointments to Excel.
-     * Admin can export appointment details in XLS format.
-     * Supports filtering by date, week, and month.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return RedirectResponse
-     */
-    public function export(Request $request): RedirectResponse
+    public function export(Request $request)
     {
-        /**
-         * Validate export parameters:
-         * - period: 'date', 'week', 'month'
-         * - specific_date: if period is 'date'
-         * - start_date, end_date: for date range
-         */
         $validated = $request->validate([
             'period' => 'required|in:date,week,month',
             'specific_date' => 'nullable|date',
@@ -58,26 +31,22 @@ class AdminReportController extends Controller
             'end_date' => 'nullable|date|after_or_equal:start_date',
         ]);
 
-        /**
-         * Based on period, filter appointments.
-         * Use Maatwebsite Excel to generate file.
-         *
-         * Example implementation:
-         * $data = [];
-         * if ($validated['period'] == 'date') {
-         *     $data = Appointment::whereDate('appointment_date', $validated['specific_date'])->get();
-         * } elseif ($validated['period'] == 'week') {
-         *     $data = Appointment::whereBetween('appointment_date', [now()->startOfWeek(), now()->endOfWeek()])->get();
-         * } elseif ($validated['period'] == 'month') {
-         *     $data = Appointment::whereMonth('appointment_date', now()->month)->get();
-         * }
-         *
-         * // return Excel::download(new AppointmentsExport($data), 'appointments.xlsx');
-         */
+        $query = Appointment::with(['patient', 'hospital', 'testResult']);
 
-        /**
-         * For demo, show a flash message.
-         */
-        return redirect()->back()->with('success', 'Export feature will be implemented (Excel export ready when database is connected)!');
+        if ($validated['period'] == 'date') {
+            $query->whereDate('appointment_date', $validated['specific_date']);
+        } elseif ($validated['period'] == 'week') {
+            $query->whereBetween('appointment_date', [now()->startOfWeek(), now()->endOfWeek()]);
+        } elseif ($validated['period'] == 'month') {
+            $query->whereMonth('appointment_date', now()->month);
+        }
+
+        $appointments = $query->get();
+
+        if ($appointments->isEmpty()) {
+            return redirect()->back()->with('error', 'No data found for the selected period.');
+        }
+
+        return Excel::download(new AppointmentsExport($appointments), 'covid_appointments_' . now()->format('Y_m_d') . '.xlsx');
     }
 }

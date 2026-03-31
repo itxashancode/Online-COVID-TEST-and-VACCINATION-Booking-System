@@ -9,28 +9,18 @@ use App\Models\User;
 
 class AdminPatientController extends Controller
 {
-    /**
-     * Display a listing of all registered patients.
-     * Admin can view all patient profiles and their details.
-     *
-     * @return View
-     */
     public function index(): View
     {
-        /**
-         * Query all users with 'patient' role using Spatie Permission.
-         * Why role('patient')? Filters users to only those with patient role
-         * This uses Spatie's role scope which is efficient and clear
-         */
-        $patients = User::role('patient')->get();
-
-        /**
-         * We could add pagination later if many patients:
-         * $patients = User::role('patient')->paginate(20);
-         * For now, get all since it's a smaller project
-         */
-
-        // Pass the patient list to the view for display in a table
+        $patients = User::role('patient')->latest()->get();
         return view('admin.patients.index', compact('patients'));
+    }
+
+    public function show($id): View
+    {
+        $patient = User::role('patient')
+            ->with(['appointments.hospital', 'appointments.testResult', 'appointments.vaccinationRecord.vaccine'])
+            ->findOrFail($id);
+
+        return view('admin.patients.show', compact('patient'));
     }
 }

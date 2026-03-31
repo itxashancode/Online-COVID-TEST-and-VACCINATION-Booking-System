@@ -1,4 +1,3 @@
-{{-- Patient - My Test Results & Vaccination Records --}}
 @extends('layouts.patient')
 
 @section('title', 'My Health Records')
@@ -15,8 +14,6 @@
     </div>
 </div>
 
-<!-- Tab Navigation -->
-<!-- Why nav-pills? Pill tabs are more modern than default nav-tabs -->
 <ul class="nav nav-pills mb-4" id="resultTabs" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active rounded-pill px-4 py-2" id="covid-tab" data-bs-toggle="tab" data-bs-target="#covid" type="button">
@@ -33,7 +30,6 @@
 </ul>
 
 <div class="tab-content" id="resultTabsContent">
-    <!-- COVID Test Results Tab -->
     <div class="tab-pane fade show active" id="covid" role="tabpanel">
         @if($testResults->count() > 0)
             <div class="card border-0 shadow-sm rounded-4">
@@ -71,7 +67,6 @@
                 </div>
             </div>
         @else
-            <!-- EMPTY STATE: No test results yet -->
             <div class="empty-state">
                 <i data-lucide="test-tube" style="width: 64px; height: 64px;"></i>
                 <h5 class="text-muted">No Test Results Yet</h5>
@@ -80,7 +75,6 @@
         @endif
     </div>
 
-    <!-- Vaccination Records Tab -->
     <div class="tab-pane fade" id="vaccine" role="tabpanel">
         @if($vaccinationRecords->count() > 0)
             <div class="card border-0 shadow-sm rounded-4">
@@ -116,7 +110,6 @@
                 </div>
             </div>
         @else
-            <!-- EMPTY STATE: No vaccination records yet -->
             <div class="empty-state">
                 <i data-lucide="syringe" style="width: 64px; height: 64px;"></i>
                 <h5 class="text-muted">No Vaccinations Yet</h5>

@@ -25,6 +25,15 @@ class VaccinationRecord extends Model
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'vaccination_date' => 'date',
+    ];
+
+    /**
      * VaccinationRecord belongs to an Appointment.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

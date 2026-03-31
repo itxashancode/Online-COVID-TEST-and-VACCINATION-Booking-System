@@ -8,8 +8,6 @@
 @endsection
 
 @section('content')
-<!-- Page Header -->
-<!-- Why? Clear page title with subtle CTA buttons helps patient understand where they are and what they can do -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h2 class="fw-bold text-patient-theme mb-1">My Dashboard</h2>
@@ -20,7 +18,6 @@
             <i data-lucide="search" class="me-2" style="width: 16px; height: 16px;"></i>
             Find Hospital
         </a>
-        <!-- Why btn-primary? Primary actions should stand out - booking an appointment is the main task for patients -->
         <a href="{{ route('patient.appointments.create') }}" class="btn btn-primary rounded-2 shadow-sm">
             <i data-lucide="calendar-plus" class="me-2" style="width: 16px; height: 16px;"></i>
             Book Appointment
@@ -28,7 +25,6 @@
     </div>
 </div>
 
-<!-- Stats Cards Row -->
 <div class="row g-3 mb-4">
     <div class="col-md-4">
         <div class="card border-0 bg-white rounded-4 shadow-sm h-100 hover-lift">
@@ -77,7 +73,6 @@
     </div>
 </div>
 
-<!-- Upcoming Appointments -->
 <div class="card border-0 shadow-sm rounded-4 mb-4">
     <div class="card-header bg-transparent border-0 pt-4 pb-3 d-flex justify-content-between align-items-center">
         <h5 class="fw-bold mb-0">
@@ -90,9 +85,7 @@
     </div>
     <div class="card-body pb-4">
         @if($upcomingAppointments->count() > 0)
-            <!-- Why table-responsive? Ensures tables scroll horizontally on mobile instead of breaking layout -->
             <div class="table-responsive">
-                <!-- Why table-hover? Row hover effect improves readability for long lists -->
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>
@@ -129,7 +122,6 @@
                 </table>
             </div>
         @else
-            <!-- EMPTY STATE: Beautiful design instead of boring text -->
             <div class="empty-state">
                 <i data-lucide="calendar-x" style="width: 64px; height: 64px;"></i>
                 <h5 class="text-muted">No upcoming appointments</h5>
@@ -143,7 +135,6 @@
     </div>
 </div>
 
-<!-- Recent Results -->
 <div class="card border-0 shadow-sm rounded-4 mb-4">
     <div class="card-header bg-transparent border-0 pt-4 pb-3 d-flex justify-content-between align-items-center">
         <h5 class="fw-bold mb-0">
@@ -200,7 +191,6 @@
     </div>
 </div>
 
-<!-- Vaccination History -->
 <div class="card border-0 shadow-sm rounded-4">
     <div class="card-header bg-transparent border-0 pt-4 pb-3">
         <h5 class="fw-bold mb-0">

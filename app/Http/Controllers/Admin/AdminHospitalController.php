@@ -10,30 +10,14 @@ use App\Models\Hospital;
 
 class AdminHospitalController extends Controller
 {
-    /**
-     * Display a listing of all hospitals.
-     * Admin can see all registered hospitals and their status.
-     *
-     * @return View
-     */
     public function index(): View
     {
-        /**
-         * Retrieve all hospitals with their related user data.
-         * Why eager load 'user'? Because in the view we'll show hospital's contact person
-         * This avoids the N+1 problem (one query for all hospitals instead of one per hospital)
-         */
         $hospitals = Hospital::with('user')->get();
 
-        /**
-         * Calculate counts by status for the header badges
-         * Using collection's where() method on the already-fetched hospitals
-         */
         $approvedCount = $hospitals->where('status', 'approved')->count();
         $pendingCount = $hospitals->where('status', 'pending')->count();
         $rejectedCount = $hospitals->where('status', 'rejected')->count();
 
-        // Pass all data to the view
         return view('admin.hospitals.index', compact(
             'hospitals',
             'approvedCount',
@@ -42,45 +26,32 @@ class AdminHospitalController extends Controller
         ));
     }
 
-    /**
-     * Approve a hospital registration.
-     * Admin can approve pending hospital requests.
-     *
-     * @param  int  $id  Hospital ID
-     * @return RedirectResponse
-     */
     public function approve($id): RedirectResponse
     {
-        /**
-         * Find the hospital by ID.
-         * Update status to 'approved'.
-         * Redirect back with success message.
-         */
-        // $hospital = Hospital::findOrFail($id);
-        // $hospital->update(['status' => 'approved']);
-        // return redirect()->back()->with('success', 'Hospital approved successfully!');
+        $hospital = Hospital::findOrFail($id);
+        $hospital->update(['status' => 'approved']);
 
-        return redirect()->back()->with('success', 'Hospital approved! (Demo)');
+        return redirect()->back()->with('success', 'Hospital approved successfully!');
     }
 
-    /**
-     * Reject a hospital registration.
-     * Admin can reject pending hospital requests.
-     *
-     * @param  int  $id  Hospital ID
-     * @return RedirectResponse
-     */
     public function reject($id): RedirectResponse
     {
-        /**
-         * Find the hospital by ID.
-         * Update status to 'rejected'.
-         * Redirect back with success message.
-         */
-        // $hospital = Hospital::findOrFail($id);
-        // $hospital->update(['status' => 'rejected']);
-        // return redirect()->back()->with('success', 'Hospital rejected successfully!');
+        $hospital = Hospital::findOrFail($id);
+        $hospital->update(['status' => 'rejected']);
 
-        return redirect()->back()->with('success', 'Hospital rejected! (Demo)');
+        return redirect()->back()->with('success', 'Hospital rejected successfully!');
+    }
+
+    public function destroy($id): RedirectResponse
+    {
+        $hospital = Hospital::findOrFail($id);
+        $user = $hospital->user;
+        
+        $hospital->delete();
+        if ($user) {
+            $user->delete();
+        }
+
+        return redirect()->back()->with('success', 'Hospital and associated account deleted successfully!');
     }
 }

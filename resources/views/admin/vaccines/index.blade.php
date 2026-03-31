@@ -1,4 +1,3 @@
-{{-- Admin - Vaccines List --}}
 @extends('layouts.admin')
 
 @section('title', 'Vaccines')
@@ -68,7 +67,6 @@
 
             {{-- Pagination: {{ $vaccines->links() }} --}}
         @else
-            <!-- EMPTY STATE: No vaccines in system yet -->
             <div class="empty-state">
                 <i data-lucide="syringe" style="width: 64px; height: 64px;"></i>
                 <h5 class="text-muted">No Vaccines Added Yet</h5>

@@ -8,67 +8,88 @@
 @endsection
 
 @section('content')
-<div class="row justify-content-center">
+<div class="row justify-content-center animate-fadeIn">
     <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">My Profile</h5>
+        <!-- Main Profile Card -->
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden glass-card">
+            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                <h4 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                    <i data-lucide="user-cog" class="text-primary"></i>
+                    My Profile Settings
+                </h4>
             </div>
-            <div class="card-body">
-                <form action="{{ route('patient.profile.update') }}" method="POST" enctype="multipart/form-data">
+            <div class="card-body p-4">
+                <form action="{{ route('patient.profile.update') }}" method="POST">
                     @csrf
                     @method('PUT')
 
-                    <!-- Profile Info -->
-                    <div class="row mb-3">
+                    <div class="row g-3 mb-4">
                         <div class="col-md-6">
-                            <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
-                            <input type="text" name="name" id="name" class="form-control" required value="{{ old('name', auth()->user()->name ?? '') }}">
+                            <label class="form-label fw-medium">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i data-lucide="user" style="width: 16px;"></i></span>
+                                <input type="text" name="name" class="form-control border-0 bg-light rounded-end-3" required value="{{ old('name', auth()->user()->name) }}">
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
-                            <input type="email" name="email" id="email" class="form-control" required value="{{ old('email', auth()->user()->email ?? '') }}">
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="phone" class="form-label">Phone Number</label>
-                            <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone', auth()->user()->phone ?? '') }}" placeholder="e.g., +1 234 567 8900">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="city" class="form-label">City</label>
-                            <input type="text" name="city" id="city" class="form-control" value="{{ old('city', auth()->user()->city ?? '') }}">
+                            <label class="form-label fw-medium">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i data-lucide="mail" style="width: 16px;"></i></span>
+                                <input type="email" name="email" class="form-control border-0 bg-light rounded-end-3" required value="{{ old('email', auth()->user()->email) }}">
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="address" class="form-label">Address</label>
-                        <textarea name="address" id="address" class="form-control" rows="2">{{ old('address', auth()->user()->address ?? '') }}</textarea>
-                    </div>
-
-                    <hr class="my-4">
-                    <h6>Change Password (Optional)</h6>
-                    <p class="text-muted small">Leave blank if you don't want to change password</p>
-
-                    <div class="mb-3">
-                        <label for="current_password" class="form-label">Current Password</label>
-                        <input type="password" name="current_password" id="current_password" class="form-control">
-                    </div>
-                    <div class="row mb-3">
+                    <div class="row g-3 mb-4">
                         <div class="col-md-6">
-                            <label for="new_password" class="form-label">New Password</label>
-                            <input type="password" name="new_password" id="new_password" class="form-control" minlength="8">
+                            <label class="form-label fw-medium">Phone Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i data-lucide="phone" style="width: 16px;"></i></span>
+                                <input type="text" name="phone" class="form-control border-0 bg-light rounded-end-3" value="{{ old('phone', auth()->user()->phone) }}">
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <label for="new_password_confirmation" class="form-label">Confirm New Password</label>
-                            <input type="password" name="new_password_confirmation" id="new_password_confirmation" class="form-control" minlength="8">
+                            <label class="form-label fw-medium">City</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-0"><i data-lucide="map-pin" style="width: 16px;"></i></span>
+                                <input type="text" name="city" class="form-control border-0 bg-light rounded-end-3" value="{{ old('city', auth()->user()->city) }}">
+                            </div>
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between">
-                        <button type="submit" class="btn btn-primary">Update Profile</button>
-                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <div class="mb-4">
+                        <label class="form-label fw-medium">Residential Address</label>
+                        <textarea name="address" class="form-control border-0 bg-light rounded-3" rows="3">{{ old('address', auth()->user()->address) }}</textarea>
+                    </div>
+
+                    <div class="bg-light p-4 rounded-4 mb-4 border-start border-4 border-primary shadow-sm bg-opacity-50">
+                        <h6 class="fw-bold text-dark d-flex align-items-center gap-2 mb-3">
+                            <i data-lucide="shield-lock" style="width: 18px;"></i>
+                            Security & Password
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label text-muted small">Current Password (Required to change email or password)</label>
+                                <input type="password" name="current_password" class="form-control border-0 rounded-3">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small">New Password</label>
+                                <input type="password" name="new_password" class="form-control border-0 rounded-3">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small">Confirm New Password</label>
+                                <input type="password" name="new_password_confirmation" class="form-control border-0 rounded-3">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center pt-2">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm">
+                            <i data-lucide="save" class="me-2" style="width: 18px;"></i>
+                            Update Profile
+                        </button>
+                        <button type="button" class="btn btn-outline-danger border-0 rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i data-lucide="trash-2" class="me-2" style="width: 18px;"></i>
                             Delete Account
                         </button>
                     </div>
@@ -76,22 +97,22 @@
             </div>
         </div>
 
-        <!-- Account Info Card -->
-        <div class="card mt-3">
-            <div class="card-header">
-                <h6 class="mb-0">Account Information</h6>
-            </div>
-            <div class="card-body">
-                <dl class="row mb-0">
-                    <dt class="col-sm-4">Account Type</dt>
-                    <dd class="col-sm-8">Patient</dd>
-
-                    <dt class="col-sm-4">Member Since</dt>
-                    <dd class="col-sm-8">{{ auth()->user()->created_at->format('F d, Y') }}</dd>
-
-                    <dt class="col-sm-4">Last Updated</dt>
-                    <dd class="col-sm-8">{{ auth()->user()->updated_at->diffForHumans() }}</dd>
-                </dl>
+        <!-- Meta Info Card -->
+        <div class="card border-0 shadow-sm rounded-4 mt-4 bg-primary bg-opacity-10 text-primary overflow-hidden">
+            <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-white rounded-circle p-2 shadow-sm">
+                        <i data-lucide="info" style="width: 20px; height: 20px;"></i>
+                    </div>
+                    <div>
+                        <span class="small fw-medium opacity-75">Member Since:</span>
+                        <span class="small fw-bold ms-1">{{ auth()->user()->created_at->format('M d, Y') }}</span>
+                    </div>
+                </div>
+                <div>
+                    <span class="small fw-medium opacity-75">Last Activity:</span>
+                    <span class="small fw-bold ms-1 text-dark">{{ auth()->user()->updated_at->diffForHumans() }}</span>
+                </div>
             </div>
         </div>
     </div>

@@ -33,6 +33,7 @@
                             <th>Date</th>
                             <th>Status</th>
                             <th>Created</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -61,15 +62,23 @@
                                 @endif
                             </td>
                             <td class="text-muted small">{{ $appointment->created_at->format('M d, Y') }}</td>
+                            <td>
+                                <form action="{{ route('admin.bookings.destroy', $appointment->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this booking permanently?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-2" title="Delete">
+                                        <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
 
-            {{-- Pagination: {{ $appointments->links() }} --}
+            {{-- Pagination: {{ $appointments->links() }} --}}
         @else
-            <!-- EMPTY STATE: No appointments yet -->
             <div class="empty-state">
                 <i data-lucide="calendar" style="width: 64px; height: 64px;"></i>
                 <h5 class="text-muted">No Appointments Yet</h5>

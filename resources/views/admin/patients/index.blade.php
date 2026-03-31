@@ -1,4 +1,3 @@
-{{-- Admin - All Patients --}}
 @extends('layouts.admin')
 
 @section('title', 'All Patients')
@@ -42,7 +41,7 @@
                             <td>{{ $patient->city ?? 'N/A' }}</td>
                             <td>{{ $patient->created_at->format('M d, Y') }}</td>
                             <td>
-                                <a href="#" class="btn btn-sm btn-outline-primary rounded-2">
+                                <a href="{{ route('admin.patients.show', $patient->id) }}" class="btn btn-sm btn-outline-primary rounded-2">
                                     <i data-lucide="eye" class="me-1" style="width: 14px; height: 14px;"></i>
                                     View
                                 </a>
@@ -55,7 +54,6 @@
 
             {{-- Pagination if we enable it: {{ $patients->links() }} --}}
         @else
-            <!-- EMPTY STATE: No patients in system yet -->
             <div class="empty-state">
                 <i data-lucide="users" style="width: 64px; height: 64px;"></i>
                 <h5 class="text-muted">No Patients Registered Yet</h5>

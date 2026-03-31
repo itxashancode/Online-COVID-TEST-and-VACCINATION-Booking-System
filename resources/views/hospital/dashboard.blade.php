@@ -8,7 +8,6 @@
 @endsection
 
 @section('content')
-<!-- Page Header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h2 class="fw-bold text-hospital-theme mb-1">Hospital Dashboard</h2>
@@ -20,7 +19,6 @@
     </span>
 </div>
 
-<!-- Stats Cards -->
 <div class="row g-3 mb-4">
     <div class="col-md-4">
         <div class="card border-0 bg-white rounded-4 shadow-sm h-100 hover-lift">
@@ -69,7 +67,6 @@
     </div>
 </div>
 
-<!-- Quick Actions -->
 <div class="card border-0 shadow-sm rounded-4 mb-4">
     <div class="card-header bg-transparent border-0 pt-4 pb-3">
         <h5 class="fw-bold mb-0">
@@ -101,7 +98,6 @@
     </div>
 </div>
 
-<!-- Recent Appointments -->
 <div class="card border-0 shadow-sm rounded-4">
     <div class="card-header bg-transparent border-0 pt-4 pb-3 d-flex justify-content-between align-items-center">
         <h5 class="fw-bold mb-0">
