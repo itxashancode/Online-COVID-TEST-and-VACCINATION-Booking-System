@@ -17,14 +17,40 @@ class HospitalAppointmentController extends Controller
     public function index()
     {
         /**
-         * Get the authenticated hospital's ID.
-         * Fetch all appointments for this hospital.
-         * Include patient details using eager loading.
+         * Get the authenticated hospital's profile.
+         * Why? To ensure hospitals only see their own appointments (data isolation)
          */
-        // $hospital = auth()->user()->hospital;
-        // $appointments = $hospital->appointments()->with('patient')->latest()->get();
+        $hospital = auth()->user()->hospital;
 
-        return view('hospital.appointments.index');
+        // If hospital doesn't exist (edge case), show empty data
+        if (!$hospital) {
+            $appointments = collect();
+            $pendingCount = $approvedCount = $completedCount = 0;
+        } else {
+            /**
+             * Fetch all appointments for this hospital with patient details.
+             * Why eager load 'patient'? To display patient name/email without N+1 queries
+             */
+            $appointments = $hospital->appointments()
+                ->with('patient')
+                ->latest()  // Most recent first
+                ->get();
+
+            /**
+             * Calculate counts for status badges
+             */
+            $pendingCount = $appointments->where('status', 'pending')->count();
+            $approvedCount = $appointments->where('status', 'approved')->count();
+            $completedCount = $appointments->where('status', 'completed')->count();
+        }
+
+        // Pass data to view
+        return view('hospital.appointments.index', compact(
+            'appointments',
+            'pendingCount',
+            'approvedCount',
+            'completedCount'
+        ));
     }
 
     /**

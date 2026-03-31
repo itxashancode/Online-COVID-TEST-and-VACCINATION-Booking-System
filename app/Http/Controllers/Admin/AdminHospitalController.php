@@ -18,11 +18,26 @@ class AdminHospitalController extends Controller
     {
         /**
          * Retrieve all hospitals with their related user data.
-         * Eager load 'user' relationship to avoid N+1 queries.
+         * Why eager load 'user'? Because in the view we'll show hospital's contact person
+         * This avoids the N+1 problem (one query for all hospitals instead of one per hospital)
          */
-        // $hospitals = Hospital::with('user')->get();
+        $hospitals = Hospital::with('user')->get();
 
-        return view('admin.hospitals.index');
+        /**
+         * Calculate counts by status for the header badges
+         * Using collection's where() method on the already-fetched hospitals
+         */
+        $approvedCount = $hospitals->where('status', 'approved')->count();
+        $pendingCount = $hospitals->where('status', 'pending')->count();
+        $rejectedCount = $hospitals->where('status', 'rejected')->count();
+
+        // Pass all data to the view
+        return view('admin.hospitals.index', compact(
+            'hospitals',
+            'approvedCount',
+            'pendingCount',
+            'rejectedCount'
+        ));
     }
 
     /**

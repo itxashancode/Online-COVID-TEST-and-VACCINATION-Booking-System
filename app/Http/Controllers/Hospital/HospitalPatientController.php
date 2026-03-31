@@ -17,19 +17,30 @@ class HospitalPatientController extends Controller
     {
         /**
          * Get the logged-in hospital's profile.
-         * Retrieve patients who have approved appointments.
-         * We join appointments with users where status is 'approved'.
-         *
-         * Later add search by name, phone, etc.
+         * Why? To filter patients by this specific hospital's approved appointments
          */
-        // $hospital = auth()->user()->hospital;
-        // $patients = User::role('patient')
-        //     ->whereHas('appointments', function($query) use ($hospital) {
-        //         $query->where('hospital_id', $hospital->id)
-        //               ->where('status', 'approved');
-        //     })
-        //     ->get();
+        $hospital = auth()->user()->hospital;
 
-        return view('hospital.patients.index');
+        // Handle case where hospital profile doesn't exist (edge case)
+        if (!$hospital) {
+            $patients = collect();
+        } else {
+            /**
+             * Query all patients (users with 'patient' role) who have
+             * at least one approved appointment at this hospital.
+             *
+             * Why whereHas? Filters patients based on their related appointments
+             * This returns only patients, not appointments themselves
+             */
+            $patients = User::role('patient')
+                ->whereHas('appointments', function($query) use ($hospital) {
+                    $query->where('hospital_id', $hospital->id)
+                          ->where('status', 'approved');
+                })
+                ->get();
+        }
+
+        // Pass patients to the view
+        return view('hospital.patients.index', compact('patients'));
     }
 }

@@ -19,20 +19,23 @@ class PatientAppointmentController extends Controller
     public function create(Request $request)
     {
         /**
-         * If hospital_id is provided via query parameter, pre-select that hospital.
-         * Otherwise, show list of approved hospitals for selection.
+         * If hospital_id is provided via query parameter (e.g., from search page),
+         * pre-select that hospital. Only show if hospital is approved.
          */
-        // $hospital = null;
-        // if ($request->has('hospital_id')) {
-        //     $hospital = Hospital::where('id', $request->hospital_id)
-        //         ->where('status', 'approved')
-        //         ->first();
-        // }
+        $hospital = null;
+        if ($request->has('hospital_id')) {
+            $hospital = Hospital::where('id', $request->hospital_id)
+                ->where('status', 'approved')
+                ->first();
+        }
 
-        // If no specific hospital, get all approved hospitals for dropdown
-        // $hospitals = Hospital::where('status', 'approved')->orderBy('hospital_name')->get();
+        // If no specific hospital, get all approved hospitals for dropdown selection
+        $hospitals = Hospital::where('status', 'approved')
+            ->orderBy('hospital_name', 'asc')
+            ->get();
 
-        return view('patient.appointments.create');
+        // Pass data to view: $hospital (pre-selected, may be null) and $hospitals (list for dropdown)
+        return view('patient.appointments.create', compact('hospital', 'hospitals'));
     }
 
     /**
@@ -88,14 +91,15 @@ class PatientAppointmentController extends Controller
     {
         /**
          * Get all appointments for the authenticated user.
-         * Load hospital details with eager loading.
-         * Order by date (most recent first).
+         * Why eager load 'hospital'? To show hospital name without N+1 queries
+         * Why latest()? Show most recent appointments first (booked recently)
          */
-        // $appointments = auth()->user()->appointments()
-        //     ->with('hospital')
-        //     ->latest()
-        //     ->get();
+        $appointments = auth()->user()->appointments()
+            ->with('hospital')
+            ->latest()
+            ->get();
 
-        return view('patient.appointments.index');
+        // Pass appointments to the view
+        return view('patient.appointments.index', compact('appointments'));
     }
 }

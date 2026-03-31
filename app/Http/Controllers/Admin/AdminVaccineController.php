@@ -18,11 +18,13 @@ class AdminVaccineController extends Controller
     {
         /**
          * Retrieve all vaccines from database.
-         * Order by most recent first.
+         * Why latest()? Show newest entries first (vaccines added recently)
+         * This helps admin see what was recently added to inventory
          */
-        // $vaccines = Vaccine::latest()->get();
+        $vaccines = Vaccine::latest()->get();
 
-        return view('admin.vaccines.index');
+        // Pass vaccine list to the view
+        return view('admin.vaccines.index', compact('vaccines'));
     }
 
     /**

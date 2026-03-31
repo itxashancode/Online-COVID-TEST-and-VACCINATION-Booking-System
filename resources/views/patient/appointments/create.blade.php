@@ -11,12 +11,13 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-transparent border-0 pt-4 pb-3">
+                <h5 class="fw-bold mb-0">
+                    <i data-lucide="calendar-plus" class="me-2 text-patient" style="width: 20px; height: 20px;"></i>
                     Book Appointment for
                     @if($hospital ?? null)
-                        {{ $hospital->hospital_name }}
+                        <span class="text-primary">{{ $hospital->hospital_name }}</span>
                     @else
                         Select Hospital
                     @endif
@@ -25,10 +26,16 @@
             <div class="card-body">
                 @if($hospital ?? null)
                     <!-- Hospital Info -->
-                    <div class="alert alert-info">
-                        <h6>{{ $hospital->hospital_name }}</h6>
-                        <p class="mb-1"><i class="bi bi-geo-alt"></i> {{ $hospital->address }}, {{ $hospital->city }}</p>
-                        <p class="mb-0"><i class="bi bi-telephone"></i> {{ $hospital->phone }}</p>
+                    <div class="alert alert-patient border-0 bg-patient-light mb-4 rounded-2">
+                        <h6 class="fw-bold mb-2">{{ $hospital->hospital_name }}</h6>
+                        <p class="mb-1 small">
+                            <i data-lucide="map-pin" class="me-1" style="width: 14px; height: 14px;"></i>
+                            {{ $hospital->address }}, {{ $hospital->city }}
+                        </p>
+                        <p class="mb-0 small">
+                            <i data-lucide="phone" class="me-1" style="width: 14px; height: 14px;"></i>
+                            {{ $hospital->phone }}
+                        </p>
                     </div>
                 @endif
 
@@ -36,9 +43,9 @@
                     @csrf
 
                     <!-- Hospital Selection -->
-                    <div class="mb-3">
-                        <label for="hospital_id" class="form-label">Select Hospital <span class="text-danger">*</span></label>
-                        <select name="hospital_id" id="hospital_id" class="form-select" required {{ $hospital ?? null ? 'disabled' : '' }}>
+                    <div class="mb-4">
+                        <label for="hospital_id" class="form-label fw-medium">Select Hospital <span class="text-danger">*</span></label>
+                        <select name="hospital_id" id="hospital_id" class="form-select rounded-2" required {{ $hospital ?? null ? 'disabled' : '' }}>
                             <option value="">-- Choose a Hospital --</option>
                             @foreach($hospitals ?? [] as $h)
                                 <option value="{{ $h->id }}" {{ ($hospital ?? null) && $hospital->id == $h->id ? 'selected' : '' }}>
@@ -52,43 +59,54 @@
                     </div>
 
                     <!-- Appointment Type -->
-                    <div class="mb-3">
-                        <label class="form-label">Appointment Type <span class="text-danger">*</span></label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="appointment_type" id="type_covid" value="covid_test" required>
-                            <label class="form-check-label" for="type_covid">
-                                🦠 COVID-19 Test
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="appointment_type" id="type_vaccine" value="vaccination">
-                            <label class="form-check-label" for="type_vaccine">
-                                💉 Vaccination
-                            </label>
+                    <div class="mb-4">
+                        <label class="form-label fw-medium">Appointment Type <span class="text-danger">*</span></label>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-check card border-0 bg-light h-100 rounded-2 p-3 hover-lift">
+                                    <input class="form-check-input" type="radio" name="appointment_type" id="type_covid" value="covid_test" required>
+                                    <label class="form-check-label w-100 h-100 d-flex flex-column justify-content-center" for="type_covid">
+                                        <i data-lucide="activity" class="mb-2 mx-auto" style="width: 32px; height: 32px; color: #3b82f6;"></i>
+                                        <span class="fw-medium text-center">COVID-19 Test</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check card border-0 bg-light h-100 rounded-2 p-3 hover-lift">
+                                    <input class="form-check-input" type="radio" name="appointment_type" id="type_vaccine" value="vaccination">
+                                    <label class="form-check-label w-100 h-100 d-flex flex-column justify-content-center" for="type_vaccine">
+                                        <i data-lucide="shield" class="mb-2 mx-auto" style="width: 32px; height: 32px; color: #10b981;"></i>
+                                        <span class="fw-medium text-center">Vaccination</span>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Appointment Date -->
-                    <div class="mb-3">
-                        <label for="appointment_date" class="form-label">Preferred Date <span class="text-danger">*</span></label>
-                        <input type="date" name="appointment_date" id="appointment_date" class="form-control" required min="{{ date('Y-m-d') }}">
+                    <div class="mb-4">
+                        <label for="appointment_date" class="form-label fw-medium">Preferred Date <span class="text-danger">*</span></label>
+                        <input type="date" name="appointment_date" id="appointment_date" class="form-control rounded-2" required min="{{ date('Y-m-d') }}">
                     </div>
 
                     <!-- Appointment Time (Optional) -->
-                    <div class="mb-3">
-                        <label for="appointment_time" class="form-label">Preferred Time (Optional)</label>
-                        <input type="time" name="appointment_time" id="appointment_time" class="form-control">
+                    <div class="mb-4">
+                        <label for="appointment_time" class="form-label fw-medium">Preferred Time (Optional)</label>
+                        <input type="time" name="appointment_time" id="appointment_time" class="form-control rounded-2">
                     </div>
 
                     <!-- Notes -->
-                    <div class="mb-3">
-                        <label for="notes" class="form-label">Additional Notes (Optional)</label>
-                        <textarea name="notes" id="notes" class="form-control" rows="3" placeholder="Any additional information you'd like to provide..."></textarea>
+                    <div class="mb-4">
+                        <label for="notes" class="form-label fw-medium">Additional Notes (Optional)</label>
+                        <textarea name="notes" id="notes" class="form-control rounded-2" rows="3" placeholder="Any additional information you'd like to provide..."></textarea>
                     </div>
 
                     <div class="d-flex justify-content-between">
-                        <a href="javascript:history.back()" class="btn btn-secondary">Cancel</a>
-                        <button type="submit" class="btn btn-success">Request Appointment</button>
+                        <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-2 py-2 px-4">Cancel</a>
+                        <button type="submit" class="btn btn-primary rounded-2 shadow-sm py-2 px-4 fw-semibold">
+                            <i data-lucide="send" class="me-2" style="width: 16px; height: 16px;"></i>
+                            Request Appointment
+                        </button>
                     </div>
                 </form>
             </div>
@@ -109,7 +127,6 @@
 
         // If specific hospital passed via URL, load hospitals select
         @if(!($hospital ?? null))
-            // Hospital select functionality
             const hospitalSelect = document.getElementById('hospital_id');
             hospitalSelect.addEventListener('change', function() {
                 if(this.value) {

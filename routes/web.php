@@ -27,6 +27,12 @@ use App\Http\Controllers\Patient\PatientProfileController;
 |
 */
 
+// ============ HOME PAGE ============
+// Redirect homepage to login
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+
 // ============ PUBLIC ROUTES (Breeze handles login/register) ============
 // These are defined in auth.php (installed by Laravel Breeze)
 

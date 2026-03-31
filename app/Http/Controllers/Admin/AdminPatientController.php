@@ -17,15 +17,18 @@ class AdminPatientController extends Controller
     {
         /**
          * Query all users with 'patient' role using Spatie Permission.
-         * This retrieves all registered patients in the system.
-         * Later we'll add search and pagination.
+         * Why role('patient')? Filters users to only those with patient role
+         * This uses Spatie's role scope which is efficient and clear
          */
-        // $patients = User::role('patient')->get();
+        $patients = User::role('patient')->get();
 
         /**
-         * For now, return empty view - database will be populated later.
-         * View: admin/patients/index.blade.php
+         * We could add pagination later if many patients:
+         * $patients = User::role('patient')->paginate(20);
+         * For now, get all since it's a smaller project
          */
-        return view('admin.patients.index');
+
+        // Pass the patient list to the view for display in a table
+        return view('admin.patients.index', compact('patients'));
     }
 }

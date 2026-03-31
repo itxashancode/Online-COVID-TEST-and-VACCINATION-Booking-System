@@ -30,6 +30,50 @@ class User extends Authenticatable
     ];
 
     /**
+     * User belongs to a Hospital (if they are a hospital admin).
+     * This inverse relationship allows us to get hospital from user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function hospital()
+    {
+        return $this->hasOne(Hospital::class);
+    }
+
+    /**
+     * User has many Appointments as a Patient.
+     * For patient users, this returns all their appointment bookings.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'patient_id');
+    }
+
+    /**
+     * User has many TestResults as a Patient.
+     * For patient users, this returns their COVID test results.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function testResults()
+    {
+        return $this->hasMany(TestResult::class, 'patient_id');
+    }
+
+    /**
+     * User has many VaccinationRecords as a Patient.
+     * For patient users, this returns their vaccination history.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function vaccinationRecords()
+    {
+        return $this->hasMany(VaccinationRecord::class, 'patient_id');
+    }
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>

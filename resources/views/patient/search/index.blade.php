@@ -8,63 +8,73 @@
 @endsection
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Find COVID-19 Testing & Vaccination Hospitals</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-patient-theme mb-1">Find COVID-19 Test & Vaccination Hospitals</h2>
+        <p class="text-muted small mb-0">Search for approved testing and vaccination centers near you</p>
+    </div>
 </div>
 
 <!-- Search Form -->
-<div class="card mb-4">
+<div class="card border-0 shadow-sm rounded-4 mb-4">
     <div class="card-body">
-        <form action="{{ route('patient.search') }}" method="GET" class="row g-3">
+        <form action="{{ route('patient.search') }}" method="GET" class="row g-3 align-items-end">
             <div class="col-md-5">
-                <label for="hospital_name" class="form-label">Hospital Name</label>
-                <input type="text" name="hospital_name" id="hospital_name" class="form-control"
-                       placeholder="Search by hospital name..."
+                <label for="hospital_name" class="form-label fw-medium">Hospital Name</label>
+                <input type="text" name="hospital_name" id="hospital_name" class="form-control rounded-2"
+                       placeholder="Enter hospital name..."
                        value="{{ old('hospital_name', $hospital_name ?? '') }}">
             </div>
             <div class="col-md-4">
-                <label for="city" class="form-label">City</label>
-                <input type="text" name="city" id="city" class="form-control"
-                       placeholder="Search by city..."
+                <label for="city" class="form-label fw-medium">City</label>
+                <input type="text" name="city" id="city" class="form-control rounded-2"
+                       placeholder="Enter city..."
                        value="{{ old('city', $city ?? '') }}">
             </div>
-            <div class="col-md-3 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary w-100">🔍 Search</button>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100 rounded-2 shadow-sm">
+                    <i data-lucide="search" class="me-2" style="width: 16px; height: 16px;"></i>
+                    Search
+                </button>
             </div>
         </form>
     </div>
 </div>
 
 <!-- Results -->
-<div class="card">
-    <div class="card-header">
-        <h5 class="mb-0">
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-header bg-transparent border-0 pt-4 pb-3">
+        <h5 class="fw-bold mb-0">
+            <i data-lucide="hospital" class="me-2 text-patient" style="width: 20px; height: 20px;"></i>
             Available Hospitals
             @if($hospital_name || $city)
-                <small class="text-muted">(Filtered results)</small>
+                <small class="text-muted">(Filtered)</small>
             @endif
         </h5>
     </div>
-    <div class="card-body">
-        @if(/*$hospitals->count()*/ false)
-            <div class="row">
+    <div class="card-body pb-4">
+        @if(isset($hospitals) && $hospitals->count() > 0)
+            <div class="row g-3">
                 @foreach($hospitals as $hospital)
-                <div class="col-md-6 mb-3">
-                    <div class="card h-100">
+                <div class="col-md-6">
+                    <div class="card border-0 bg-light h-100 rounded-3 hover-lift">
                         <div class="card-body">
-                            <h5 class="card-title">{{ $hospital->hospital_name }}</h5>
-                            <p class="text-muted mb-1">
-                                <i class="bi bi-geo-alt"></i> {{ $hospital->address }}, {{ $hospital->city }}
+                            <h5 class="card-title fw-bold mb-2">{{ $hospital->hospital_name }}</h5>
+                            <p class="text-muted mb-1 small">
+                                <i data-lucide="map-pin" class="me-1" style="width: 14px; height: 14px;"></i>
+                                {{ $hospital->address }}, {{ $hospital->city }}
                             </p>
-                            <p class="mb-1">
-                                <i class="bi bi-telephone"></i> {{ $hospital->phone }}
+                            <p class="mb-2">
+                                <i data-lucide="phone" class="me-1" style="width: 14px; height: 14px;"></i>
+                                {{ $hospital->phone }}
                             </p>
                             @if($hospital->description)
-                                <p class="mb-2">{{ Str::limit($hospital->description, 100) }}</p>
+                                <p class="text-muted mb-3 small">{{ Str::limit($hospital->description, 100) }}</p>
                             @endif
                             <div class="mt-auto">
                                 <a href="{{ route('patient.appointments.create', ['hospital_id' => $hospital->id]) }}"
-                                   class="btn btn-primary btn-sm">
+                                   class="btn btn-primary btn-sm rounded-2 shadow-sm w-100">
+                                    <i data-lucide="calendar-plus" class="me-2" style="width: 14px; height: 14px;"></i>
                                     Book Appointment
                                 </a>
                             </div>
@@ -74,18 +84,25 @@
                 @endforeach
             </div>
 
-            {{-- $hospitals->links() --}
+            {{-- Pagination: {{ $hospitals->links() }} --}
         @else
-            <div class="text-center py-5">
-                <div class="fs-1 text-muted mb-3">🏥</div>
-                <h4>No Hospitals Found</h4>
-                <p class="text-muted">
+            <!-- EMPTY STATE: No hospitals found -->
+            <div class="empty-state">
+                <i data-lucide="hospital" style="width: 64px; height: 64px;"></i>
+                <h5 class="text-muted">No Hospitals Found</h5>
+                <p class="text-muted mb-3">
                     @if($hospital_name || $city)
-                        Try adjusting your search criteria.
+                        Try adjusting your search criteria to find more results.
                     @else
-                        No hospitals have been registered yet. Check back later!
+                        No hospitals have been registered and approved yet. Check back later!
                     @endif
                 </p>
+                @if(!$hospital_name && !$city)
+                <a href="{{ route('patient.search') }}" class="btn btn-primary rounded-2">
+                    <i data-lucide="refresh-cw" class="me-2" style="width: 16px; height: 16px;"></i>
+                    Refresh Search
+                </a>
+                @endif
             </div>
         @endif
     </div>

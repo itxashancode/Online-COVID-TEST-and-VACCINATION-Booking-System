@@ -1,28 +1,31 @@
 {{-- Admin - All Hospitals --}}
 @extends('layouts.admin')
 
-@section('title', 'Hospitals')
+@section('title', 'All Hospitals')
 
 @section('breadcrumb')
     <li class="breadcrumb-item active">Hospitals</li>
 @endsection
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Hospitals List</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <span class="badge bg-success me-2">Approved: {{-- $approvedCount --}}0</span>
-        <span class="badge bg-warning text-dark me-2">Pending: {{-- $pendingCount --}}0</span>
-        <span class="badge bg-danger">Rejected: {{-- $rejectedCount --}}0</span>
+        <h2 class="fw-bold text-admin-theme mb-1">Hospitals List</h2>
+        <p class="text-muted small mb-0">Manage hospital registrations and approvals</p>
+    </div>
+    <div class="d-flex gap-2">
+        <span class="badge bg-success rounded-pill px-3 py-2">Approved: {{ $approvedCount }}</span>
+        <span class="badge bg-warning text-dark rounded-pill px-3 py-2">Pending: {{ $pendingCount }}</span>
+        <span class="badge bg-danger rounded-pill px-3 py-2">Rejected: {{ $rejectedCount }}</span>
     </div>
 </div>
 
-<div class="card">
+<div class="card border-0 shadow-sm rounded-4">
     <div class="card-body">
-        @if(/*$hospitals->count()*/ false)
+        @if($hospitals->count() > 0)
             <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead class="table-dark">
+                <table class="table table-hover align-middle">
+                    <thead>
                         <tr>
                             <th>ID</th>
                             <th>Hospital Name</th>
@@ -37,35 +40,39 @@
                     <tbody>
                         @foreach($hospitals as $hospital)
                         <tr>
-                            <td>{{ $hospital->id }}</td>
-                            <td>{{ $hospital->hospital_name }}</td>
+                            <td class="text-muted small">{{ $hospital->id }}</td>
+                            <td class="fw-medium">{{ $hospital->hospital_name }}</td>
                             <td>{{ Str::limit($hospital->address, 30) }}</td>
                             <td>{{ $hospital->city }}</td>
                             <td>{{ $hospital->phone }}</td>
                             <td>
                                 @if($hospital->status == 'approved')
-                                    <span class="badge bg-success">Approved</span>
+                                    <span class="badge bg-success rounded-pill px-3 py-2">Approved</span>
                                 @elseif($hospital->status == 'pending')
-                                    <span class="badge bg-warning text-dark">Pending</span>
+                                    <span class="badge bg-warning text-dark rounded-pill px-3 py-2">Pending</span>
                                 @else
-                                    <span class="badge bg-danger">Rejected</span>
+                                    <span class="badge bg-danger rounded-pill px-3 py-2">Rejected</span>
                                 @endif
                             </td>
                             <td>{{ $hospital->created_at->format('M d, Y') }}</td>
                             <td>
                                 @if($hospital->status == 'pending')
-                                    <form action="{{ route('admin.hospitals.approve', $hospital) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('admin.hospitals.approve', $hospital) }}" method="POST" class="d-inline me-1">
                                         @csrf
                                         @method('POST')
-                                        <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Approve this hospital?')">Approve</button>
+                                        <button type="submit" class="btn btn-sm btn-outline-success rounded-2" onclick="return confirm('Approve this hospital?')">
+                                            <i data-lucide="check" class="me-1" style="width: 14px; height: 14px;"></i>Approve
+                                        </button>
                                     </form>
                                     <form action="{{ route('admin.hospitals.reject', $hospital) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('POST')
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Reject this hospital?')">Reject</button>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-2" onclick="return confirm('Reject this hospital?')">
+                                            <i data-lucide="x" class="me-1" style="width: 14px; height: 14px;"></i>Reject
+                                        </button>
                                     </form>
                                 @else
-                                    <span class="text-muted">No actions</span>
+                                    <span class="text-muted small">No actions</span>
                                 @endif
                             </td>
                         </tr>
@@ -74,12 +81,13 @@
                 </table>
             </div>
 
-            {{-- $hospitals->links() --}}
+            {{-- Pagination if enabled: {{ $hospitals->links() }} --}}
         @else
-            <div class="text-center py-5">
-                <div class="fs-1 text-muted mb-3">🏥</div>
-                <h4>No Hospitals Registered Yet</h4>
-                <p class="text-muted">Hospitals will appear here after they register.</p>
+            <!-- EMPTY STATE: No hospitals registered yet -->
+            <div class="empty-state">
+                <i data-lucide="building" style="width: 64px; height: 64px;"></i>
+                <h5 class="text-muted">No Hospitals Registered Yet</h5>
+                <p class="text-muted mb-3">Hospitals will appear here after they register and request approval.</p>
             </div>
         @endif
     </div>

@@ -10,30 +10,73 @@ class PatientDashboardController extends Controller
     /**
      * Display the patient dashboard.
      * Shows patient's appointments, recent results, and quick actions.
+     * Patients only see their own data (data isolation by role).
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        /**
-         * Get the authenticated patient (User model).
-         * Retrieve their data:
-         * - Upcoming appointments (status: pending, approved)
-         * - Past appointments (status: completed)
-         * - Latest test results
-         * - Vaccination history
-         */
-        // $user = auth()->user();
-        // $upcomingAppointments = $user->appointments()
-        //     ->whereIn('status', ['pending', 'approved'])
-        //     ->with('hospital')
-        //     ->latest()
-        //     ->take(5)
-        //     ->get();
-        //
-        // $recentResults = $user->testResults()->latest()->take(5)->get();
-        // $vaccinationRecords = $user->vaccinationRecords()->with('vaccine')->latest()->take(5)->get();
+        // WHY: Patients need to see their personal health information and appointments
+        // Get the authenticated patient user
+        $user = auth()->user();
 
-        return view('patient.dashboard');
+        /**
+         * UPCOMING APPOINTMENTS:
+         * Why include 'pending'? Patient can see requests they've sent that haven't been reviewed yet
+         * Why include 'approved'? Confirmed appointments that are scheduled
+         */
+        $upcomingAppointments = $user->appointments()  // Get all appointments for this patient
+            ->whereIn('status', ['pending', 'approved'])  // Filter to upcoming ones
+            ->with('hospital')  // Eager load hospital details (name, address) to show in table
+            ->latest()          // Sort by appointment date descending (most recent first)
+            ->take(5)           // Show only the next 5 (we have limited dashboard space)
+            ->get();
+
+        /**
+         * COMPLETED APPOINTMENTS:
+         * Count of appointments that have been marked as completed
+         * Why? Shows patient their vaccination/test completion progress
+         */
+        $completedCount = $user->appointments()
+            ->where('status', 'completed')
+            ->count();
+
+        /**
+         * TEST RESULTS:
+         * Patient's COVID test results linked through appointments table
+         * Why eager load? Need both result value and doctor notes
+         */
+        $recentResults = $user->testResults()
+            ->with('hospital')  // Need hospital name to show where test was done
+            ->latest()          // Most recent first
+            ->take(5)           // Limit to 5
+            ->get();
+
+        /**
+         * VACCINATION HISTORY:
+         * Records of vaccines patient has received
+         * Need vaccine details to show which vaccine was administered
+         */
+        $vaccinationRecords = $user->vaccinationRecords()
+            ->with('vaccine')  // Need vaccine name
+            ->latest()         // Most recent first
+            ->take(5)          // Limit to 5
+            ->get();
+
+        // WHY: Count of upcoming appointments shown in dashboard card
+        $upcomingCount = $upcomingAppointments->count();
+
+        // WHY: Count of test results shown in dashboard card
+        $resultsCount = $recentResults->count();
+
+        // Pass all fetched data to the patient dashboard view
+        return view('patient.dashboard', compact(
+            'upcomingAppointments',
+            'completedCount',
+            'recentResults',
+            'vaccinationRecords',
+            'upcomingCount',
+            'resultsCount'
+        ));
     }
 }
