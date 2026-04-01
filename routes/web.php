@@ -27,20 +27,15 @@ use App\Http\Controllers\Patient\PatientProfileController;
 |
 */
 
-// ============ HOME PAGE ============
-// Redirect homepage to login
+
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// ============ PUBLIC ROUTES (Breeze handles login/register) ============
-// These are defined in auth.php (installed by Laravel Breeze)
-
-// ============ DASHBOARD REDIRECT ============
 // After login, redirect users to appropriate dashboard based on role
 Route::get('/dashboard', function () {
     $user = auth()->user();
-    
+
     if ($user->hasRole('admin')) {
         return redirect()->route('admin.dashboard');
     } elseif ($user->hasRole('hospital')) {
@@ -54,7 +49,6 @@ Route::get('/dashboard', function () {
     }
 })->middleware(['auth'])->name('dashboard');
 
-// ============ ADMIN ROUTES ============
 Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(function () {
 
     // Dashboard
@@ -82,7 +76,6 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::get('/reports/export', [AdminReportController::class, 'export'])->name('reports.export');
 });
 
-// ============ HOSPITAL ROUTES ============
 Route::prefix('hospital')->middleware(['auth', 'hospital'])->name('hospital.')->group(function () {
 
     // Dashboard
@@ -105,7 +98,6 @@ Route::prefix('hospital')->middleware(['auth', 'hospital'])->name('hospital.')->
     Route::put('/vaccination/{id}', [HospitalResultController::class, 'updateVaccination'])->name('vaccination.update');
 });
 
-// ============ PATIENT ROUTES ============
 Route::prefix('patient')->middleware(['auth', 'patient'])->name('patient.')->group(function () {
 
     // Dashboard
@@ -132,6 +124,5 @@ Route::prefix('patient')->middleware(['auth', 'patient'])->name('patient.')->gro
     Route::delete('/profile', [PatientProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// ============ AUTH ROUTES (Login, Register, Logout) ============
 // These are automatically loaded by Breeze from routes/auth.php
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

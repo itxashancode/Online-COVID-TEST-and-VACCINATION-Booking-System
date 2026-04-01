@@ -1,5 +1,7 @@
+# Use the Database
 USE covid_booking;
 
+# Users
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -18,8 +20,9 @@ CREATE TABLE users (
     INDEX idx_user_type (user_type),
     INDEX idx_status (status),
     INDEX idx_city (city)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+)
 
+# Hospitals
 DROP TABLE IF EXISTS hospitals;
 CREATE TABLE hospitals (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -35,8 +38,9 @@ CREATE TABLE hospitals (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_status (status),
     INDEX idx_city (city)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+)
 
+# Vaccines
 DROP TABLE IF EXISTS vaccines;
 CREATE TABLE vaccines (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -46,8 +50,9 @@ CREATE TABLE vaccines (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_availability (availability)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+)
 
+# Appointments
 DROP TABLE IF EXISTS appointments;
 CREATE TABLE appointments (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -66,8 +71,9 @@ CREATE TABLE appointments (
     INDEX idx_hospital_status (hospital_id, status),
     INDEX idx_appointment_date (appointment_date),
     INDEX idx_appointment_type (appointment_type)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+)
 
+# Test Results
 DROP TABLE IF EXISTS test_results;
 CREATE TABLE test_results (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -86,8 +92,9 @@ CREATE TABLE test_results (
     INDEX idx_hospital (hospital_id),
     INDEX idx_result (result),
     INDEX idx_result_date (result_date)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+)
 
+# Vaccination Records
 DROP TABLE IF EXISTS vaccination_records;
 CREATE TABLE vaccination_records (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -107,9 +114,9 @@ CREATE TABLE vaccination_records (
     INDEX idx_patient_date (patient_id, vaccination_date),
     INDEX idx_hospital (hospital_id),
     INDEX idx_vaccine (vaccine_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+)
 
-
+# Roles
 DROP TABLE IF EXISTS roles;
 CREATE TABLE roles (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -118,8 +125,9 @@ CREATE TABLE roles (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_name (name)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+)
 
+# Permissions
 DROP TABLE IF EXISTS permissions;
 CREATE TABLE permissions (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -128,8 +136,9 @@ CREATE TABLE permissions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_name (name)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+)
 
+# Model Has Roles
 DROP TABLE IF EXISTS model_has_roles;
 CREATE TABLE model_has_roles (
     role_id BIGINT UNSIGNED NOT NULL,
@@ -138,8 +147,9 @@ CREATE TABLE model_has_roles (
     PRIMARY KEY (role_id, model_id, model_type),
     FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
     INDEX idx_model (model_type, model_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+)
 
+# Model Has Permissions
 DROP TABLE IF EXISTS model_has_permissions;
 CREATE TABLE model_has_permissions (
     permission_id BIGINT UNSIGNED NOT NULL,
@@ -148,8 +158,9 @@ CREATE TABLE model_has_permissions (
     PRIMARY KEY (permission_id, model_id, model_type),
     FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE,
     INDEX idx_model (model_type, model_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+)
 
+# Role Has Permissions
 DROP TABLE IF EXISTS role_has_permissions;
 CREATE TABLE role_has_permissions (
     permission_id BIGINT UNSIGNED NOT NULL,
@@ -157,15 +168,18 @@ CREATE TABLE role_has_permissions (
     PRIMARY KEY (permission_id, role_id),
     FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE,
     FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+)
 
+# Roles
 INSERT INTO roles (name, guard_name) VALUES
 ('admin', 'web'),
 ('hospital', 'web'),
 ('patient', 'web');
 
+# For Admin Creation
 INSERT INTO users (name, email, password, user_type, status, created_at, updated_at) VALUES
 ('System Administrator', 'admin@covid.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 'active', NOW(), NOW());
+
 
 INSERT INTO model_has_roles (role_id, model_type, model_id) VALUES
 (1, 'App\\Models\\User', 1);

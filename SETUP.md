@@ -229,11 +229,3 @@ covid_booking
    - Hospital updates → Patient sees results
 
 ---
-
-## 📞 Support
-
-All code follows Laravel 10 best practices with extensive comments in each file. Refer to `README.md` for complete feature documentation.
-
----
-
-**Enjoy your COVID Booking System!** 🦠📅💉

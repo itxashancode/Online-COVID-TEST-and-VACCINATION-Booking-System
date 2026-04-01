@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,7 +30,7 @@
         /* NAVBAR: Sticky with shadow */
         .navbar {
             background-color: var(--admin-primary) !important;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .navbar-brand {
@@ -85,21 +86,39 @@
 
         .hover-lift:hover {
             transform: translateY(-4px);
-            box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.1) !important;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1) !important;
         }
 
         /* Theme-specific utility classes */
-        .text-admin-theme { color: var(--admin-primary) !important; }
-        .bg-admin-light { background-color: #eff6ff !important; }
-        .border-admin { border-color: var(--admin-primary) !important; }
+        .text-admin-theme {
+            color: var(--admin-primary) !important;
+        }
+
+        .bg-admin-light {
+            background-color: #eff6ff !important;
+        }
+
+        .border-admin {
+            border-color: var(--admin-primary) !important;
+        }
 
         /* Hospital theme class (available for use in admin if needed) */
-        .text-hospital { color: var(--hospital-primary) !important; }
-        .bg-hospital { background-color: #ecfdf5 !important; }
+        .text-hospital {
+            color: var(--hospital-primary) !important;
+        }
+
+        .bg-hospital {
+            background-color: #ecfdf5 !important;
+        }
 
         /* Patient theme class */
-        .text-patient { color: var(--patient-primary) !important; }
-        .bg-patient { background-color: #eff6ff !important; }
+        .text-patient {
+            color: var(--patient-primary) !important;
+        }
+
+        .bg-patient {
+            background-color: #eff6ff !important;
+        }
 
         /* Icon wrapper: standard size for dashboard icons */
         .icon-wrapper {
@@ -118,6 +137,7 @@
             text-align: center;
             padding: 3rem 1rem;
         }
+
         .empty-state i {
             opacity: 0.4;
             margin-bottom: 1rem;
@@ -147,6 +167,7 @@
                 transform: translateX(-100%);
                 transition: transform 0.3s ease;
             }
+
             .sidebar.show {
                 transform: translateX(0);
             }
@@ -154,6 +175,7 @@
     </style>
     @yield('styles')
 </head>
+
 <body>
     <!-- Navigation Bar -->
     <!-- Sticky navigation for easy access -->
@@ -161,10 +183,11 @@
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('admin.dashboard') }}">
                 <i data-lucide="layout-dashboard" style="width: 28px; height: 28px;"></i>
-                <span>MED-Digi</span>
+                <span>MED Digi</span>
             </a>
             <!-- MOBILE TOGGLE -->
-            <button class="navbar-toggler d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+            <button class="navbar-toggler d-md-none border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#sidebarMenu">
                 <i data-lucide="menu" class="text-white"></i>
             </button>
             <div class="d-flex align-items-center gap-3">
@@ -184,37 +207,43 @@
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
+                            <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                                href="{{ route('admin.dashboard') }}">
                                 <i data-lucide="layout-dashboard" style="width: 18px; height: 18px;"></i>
                                 Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.patients.*') ? 'active' : '' }}" href="{{ route('admin.patients.index') }}">
+                            <a class="nav-link {{ request()->routeIs('admin.patients.*') ? 'active' : '' }}"
+                                href="{{ route('admin.patients.index') }}">
                                 <i data-lucide="users" style="width: 18px; height: 18px;"></i>
                                 Patients
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.hospitals.*') ? 'active' : '' }}" href="{{ route('admin.hospitals.index') }}">
+                            <a class="nav-link {{ request()->routeIs('admin.hospitals.*') ? 'active' : '' }}"
+                                href="{{ route('admin.hospitals.index') }}">
                                 <i data-lucide="building" style="width: 18px; height: 18px;"></i>
                                 Hospitals
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.vaccines.*') ? 'active' : '' }}" href="{{ route('admin.vaccines.index') }}">
+                            <a class="nav-link {{ request()->routeIs('admin.vaccines.*') ? 'active' : '' }}"
+                                href="{{ route('admin.vaccines.index') }}">
                                 <i data-lucide="syringe" style="width: 18px; height: 18px;"></i>
                                 Vaccines
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}" href="{{ route('admin.bookings.index') }}">
+                            <a class="nav-link {{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}"
+                                href="{{ route('admin.bookings.index') }}">
                                 <i data-lucide="calendar" style="width: 18px; height: 18px;"></i>
                                 Bookings
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" href="{{ route('admin.reports.index') }}">
+                            <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"
+                                href="{{ route('admin.reports.index') }}">
                                 <i data-lucide="bar-chart-3" style="width: 18px; height: 18px;"></i>
                                 Reports
                             </a>
@@ -252,4 +281,5 @@
     <script>lucide.createIcons();</script>
     @yield('scripts')
 </body>
+
 </html>
